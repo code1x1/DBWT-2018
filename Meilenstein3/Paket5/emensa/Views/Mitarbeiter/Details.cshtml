@@ -1,0 +1,36 @@
+@model emensa.Models.Mitarbeiter
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Mitarbeiter</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Büro)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Büro)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Telefon)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Telefon)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FkFhangeNavigation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FkFhangeNavigation.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,42 @@
+@model IEnumerable<emensa.Models.Mahlzeiten>
+@using emensa.Controllers
+
+@{
+    ViewData["Title"] = "Produkte";
+}
+
+<div class="row margin-top-row">
+
+    <partial name="_productFilter" view-data="ViewData"/>
+
+    <div class="col-md-9">
+        <h2>Verfügbare Speisen</h2>
+        <div class='row'>
+        @foreach (var item in Model) {
+                <div class="col-lg-3 col-md-6 col-sm-12 margin-top-wide product-thumb">
+                            <div class="thumb-height">
+                                @if(item.Vorrat > 0){
+                                    <img class="thumbnail center-block" alt='@MahlzeitenController.getImageAltText(item.Id)' src='/Bilder/getImage/@MahlzeitenController.getImageID(item.Id)' />
+                                }
+                                else{
+                                    <img class="thumbnail grey-filter center-block" alt='@MahlzeitenController.getImageAltText(item.Id)' src='/Bilder/getImage/@MahlzeitenController.getImageID(item.Id)' />    
+                                }
+                            </div>
+                            <small class="copyright">
+                                <a href='@MahlzeitenController.getImageCopyright(item.Id)' target="_blank">Copyright</a>
+                            </small>
+                            <div class="text-center">
+                                @item.Name
+                            </div>
+                            <div class="text-center">
+                                @if(item.Vorrat > 0){
+                                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                                }   
+                            </div>
+                </div>
+        }
+        </div>
+    
+    </div>
+
+</div>

@@ -1,0 +1,35 @@
+@using MySql.Data.MySqlClient
+
+<div class="col-md-3">
+    <form method="get" action="/Produkte">
+        <fieldset class="border padding-alert">
+            <legend>Speisenliste filtern</legend>
+            <div>
+                <select>
+                    <optgroup label="Fleisch">
+                        <option value="Hamburger" disabled>Hamburger</option>
+                        <option value="Currywurst">Currywurst</option>
+                    </optgroup>
+                    <optgroup label="Vegetarisch">
+                        <option value="Milchreis">Milchreis</option>
+                        <option value="Spiegelei">Spiegelei</option>
+                    </optgroup>
+                    <optgroup label="Vegan">
+                        <option value="Reis" selected>Reis</option>
+                        <option value="Salat">Salat</option>
+                    </optgroup>
+                    </select>
+            </div>
+            <div>
+                <input type="checkbox" name="verfugbar" id="verfugbar" value="available" /> <label for="verfugbar">verfugbar</label>
+            </div>
+            <div>
+                <input type="checkbox" name="vegetarisch" id="vegetar" value="vegetar" /> <label for="vegetar">vegetar</label>
+            </div>
+            <div>
+                <input type="checkbox" name="vegan" id="vegan" value="vegan" /> <label for="vegan">vegan</label>
+            </div>
+        </fieldset>
+        <input type="submit" class="btn btn-default" value="Filtern" />
+    </form>
+</div>

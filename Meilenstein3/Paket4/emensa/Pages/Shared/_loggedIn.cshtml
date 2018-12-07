@@ -1,0 +1,20 @@
+@using System.Web
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+<div class="col-md-3">
+    <form method="post" action="/Login">
+        @Html.AntiForgeryToken()
+        <fieldset class="border padding-alert">
+            <legend>Login</legend>
+            <div>
+                <span>Role: </span>
+                <span>@(HttpContextAccessor.HttpContext.Session.GetString("role"))</span>
+            </div>
+            <div>
+                <span>User: </span>
+                <span>@(HttpContextAccessor.HttpContext.Session.GetString("user"))</span>
+            </div>
+            <input type="submit" class="btn btn-default margin-top-row" name="abmelden" value="Abmelden" />
+        </fieldset>       
+    </form>
+</div>

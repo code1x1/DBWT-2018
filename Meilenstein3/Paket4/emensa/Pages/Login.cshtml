@@ -1,0 +1,58 @@
+@page
+@using MySql.Data.MySqlClient
+@using System.Configuration
+@using Microsoft.AspNetCore.Http
+@using PasswordSecurity
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Login";
+}
+<div class="center">
+@{
+    if(HttpContext.Request.Method == "POST" && Request.Form["anmelden"] == "Anmelden"){
+        MySqlConnection logincon = new MySqlConnection("Server=localhost;Port=3306;Database=emensa;Uid=denis;Pwd=;");
+        try{
+            logincon.Open();
+            MySqlCommand logincmd = new MySqlCommand("LoginProcedure", logincon);
+            logincmd.CommandType = System.Data.CommandType.StoredProcedure;
+            logincmd.Parameters.AddWithValue("@Lname", Request.Form["user"]);
+            MySqlDataReader loginresult = logincmd.ExecuteReader();
+
+            if (loginresult.Read() && !string.IsNullOrEmpty(loginresult["Nutzername"] as string)){
+                string dbhash = String.Format("{0}:{1}:{2}:{3}:{4}",
+                                                "sha1",
+                                                "64000",
+                                                Convert.ToString(18),
+                                                loginresult["salt"],
+                                                loginresult["hash"]);
+                if (PasswordStorage.VerifyPassword(Request.Form["pass"],dbhash)){
+                    HttpContext.Session.SetString("user", loginresult["Nutzername"].ToString());
+                    HttpContext.Session.SetString("role", loginresult["role"].ToString());
+                }
+                else{
+                    ViewData["LoginMessage"] = "Die eingegeben Logindaten wurden nicht gefunden!";
+                }
+                
+            }
+        } catch(Exception e){
+           @:<!-- <div>@e.Message</div> -->
+        } finally{
+            logincon.Close();   
+        }
+    }
+    else if(HttpContext.Request.Method == "POST" && Request.Form["abmelden"] == "Abmelden"){
+        HttpContext.Session.SetString("user", "");
+        HttpContext.Session.SetString("role", "");
+    }
+
+}
+
+
+@if(string.IsNullOrEmpty(HttpContext.Session.GetString("user"))){
+    <partial name="_loginForm" view-data="ViewData" />
+}
+else{
+    <partial name="_loggedIn" view-data="ViewData" />
+}
+
+</div>

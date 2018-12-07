@@ -1,0 +1,137 @@
+@using MySql.Data.MySqlClient
+
+@functions{
+
+/*
+    string imShow(byte[] data, int type)
+    {
+            //data:[<mime type>][;charset=<Zeichensatz>][;base64],<Daten>
+            string b64 = Convert.ToBase64String(data, 0, data.Length);
+            switch(type)
+            {
+                    case 0: //jpg
+                            return "data:image/jpg;base64," + b64;
+    
+                    case 1: //png
+                            return "data:image/png;base64," + b64;
+    
+                    case 2: //bmp
+                            return "data:image/bmp;base64," + b64;
+    
+                    case 4: //gif
+                            return "data:image/gif;base64," + b64;
+    
+                    default:
+                            return "data:image/jpg;base64," + b64;
+            }
+            
+    }
+*/
+
+}
+
+<div class="col-md-9">
+    <h2>Verfügbare Speisen</h2>
+@{
+    MySqlConnection con = new MySqlConnection("Server=localhost;Port=3306;Database=emensa;Uid=denis;Pwd=;");
+
+    try
+    {
+
+        string filter = (ViewData["filter"].ToString() == "" ? null : ViewData["filter"].ToString());
+        string vegan = (ViewData["vegan"].ToString() == "" ? null : ViewData["vegan"].ToString());
+        string vegetarisch = (ViewData["vegetar"].ToString() == "" ? null : ViewData["vegetar"].ToString());
+        string verfugbar = (ViewData["verfugbar"].ToString() == "" ? null : ViewData["verfugbar"].ToString());
+
+        con.Open();
+
+        MySqlCommand cmd = con.CreateCommand();
+        cmd.CommandText= @"SELECT DISTINCT 
+                                m.ID,
+                                m.Vorrat,
+                                m.`Name`,
+                                b.`Alt-Text`,
+                                b.Titel,
+                                b.ID AS BID,
+                                b.`Binärdaten`,
+                                b.Copyright
+                            FROM
+                                Mahlzeiten AS m
+                                    JOIN
+                                MahlzeitenBilder mb ON mb.IDMahlzeiten = m.ID
+                                    JOIN
+                                Bilder b ON b.ID = mb.IDBilder
+                                    JOIN
+                                Kategorien k ON k.ID = m.fkKategorie
+                                    LEFT JOIN
+                                MahlzeitenZutaten mz ON mz.IDMahlzeiten = m.ID
+                                    LEFT JOIN
+                                Zutaten z ON z.ID = mz.IDZutaten ";
+        if(ViewData["all"].ToString() != "true"){
+        cmd.CommandText += @" WHERE
+                                    (k.ID = @filter
+                                    OR @filter IS NULL)
+                                    AND (z.Vegetarisch = @vegetarisch
+                                    OR @vegetarisch IS NULL)
+                                    AND (z.Vegan = @vegan
+                                    OR @vegan IS NULL)
+                                    AND (m.`Verfügbar` = @verfugbar
+                                    OR @verfugbar IS NULL)";
+        }
+        cmd.CommandText += @" LIMIT 8";
+        cmd.Parameters.AddWithValue("filter", filter);
+        cmd.Parameters.AddWithValue("vegan", vegan);
+        cmd.Parameters.AddWithValue("vegetarisch", vegetarisch);
+        cmd.Parameters.AddWithValue("verfugbar", verfugbar);
+
+        // SQL Befehl absetzen
+        MySqlDataReader reader = cmd.ExecuteReader();
+        int counter = 0;
+        int rowWidth=3;
+        @:<div class='row'>
+        while(reader.Read()){
+            while (counter < rowWidth)
+            {               
+                int Vorrat = Convert.ToInt32(reader["Vorrat"]);         
+                <div class="col-lg-3 col-md-6 col-sm-12 margin-top-wide product-thumb">
+                    <div class="thumb-height">
+                        @if(Vorrat > 0){
+                            <img class="thumbnail center-block" alt='@reader["Alt-Text"]' src='/Bild?id=@reader["BID"]' />
+                        }
+                        else{
+                            <img class="thumbnail grey-filter center-block" alt='@reader["Alt-Text"]' src='/Bild?id=@reader["BID"]' />    
+                        }
+                    </div>
+                    <small class="copyright">
+                        <a href='@reader["Copyright"]' target="_blank">Copyright</a>
+                    </small>
+                    <div class="text-center">@reader["Titel"]</div>
+                    <div class="text-center">
+                    @if(Vorrat > 0){
+                         <a href='/Detail?id=@reader["ID"]'>Details</a>
+                    }   
+                    </div>
+                </div>
+                counter++;
+                if(counter < rowWidth){
+                    if(!reader.Read()){ break; }
+                }
+            }
+            counter=0;            
+        }
+        @:</div>
+    }
+    catch (Exception ex)
+    {
+        <p class="danger">
+            DANGER! in rot ;)
+            <br />@ex.Message
+        </p>
+    }
+    finally{
+        // Verbindung nicht mehr nötig
+        con.Close();
+    }
+}
+
+</div>

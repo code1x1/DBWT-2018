@@ -1,0 +1,90 @@
+@using MySql.Data.MySqlClient
+
+@functions{
+    public string imShow(byte[] data, int type)
+    {
+            //data:[<mime type>][;charset=<Zeichensatz>][;base64],<Daten>
+            string b64 = Convert.ToBase64String(data, 0, data.Length);
+            switch(type)
+            {
+                    case 0: //jpg
+                            return "data:image/jpg;base64," + b64;
+    
+                    case 1: //png
+                            return "data:image/png;base64," + b64;
+    
+                    case 2: //bmp
+                            return "data:image/bmp;base64," + b64;
+    
+                    case 4: //gif
+                            return "data:image/gif;base64," + b64;
+    
+                    default:
+                            return "data:image/jpg;base64," + b64;
+            }
+            
+    }
+
+
+}
+
+<div class="col-md-9">
+    <h2>Verfügbare Speisen</h2>
+@{
+    MySqlConnection con = new MySqlConnection("Server=localhost;Port=3306;Database=emensa;Uid=denis;Pwd=;");
+
+    try
+    {
+
+        // hier öffnen Sie die Verbindung zu, DBMS 
+        con.Open();
+
+        string query = @"SELECT m.ID, m.`Name`, b.`Alt-Text`, b.Titel, b.`Binärdaten`, b.Copyright FROM Mahlzeiten AS m 
+                        JOIN MahlzeitenBilder mb ON mb.IDMahlzeiten=m.ID
+                        JOIN Bilder b ON b.ID=mb.IDBilder
+                        LIMIT 8;";
+
+        // Achtung, Tür und TOr offen für SQL Injection Attacks, aber zu Demonstrationszwecken okay
+        MySqlCommand command = new MySqlCommand(query, con);
+
+        // SQL Befehl absetzen und direkt in "reader" speichern
+        MySqlDataReader reader = command.ExecuteReader();
+        int counter = 0;
+        int rowWidth=3;
+        @:<div class='row'>
+        while(reader.Read()){
+            while (counter < rowWidth)
+            {                        
+                <div class="col-lg-3 col-md-6 col-sm-12 margin-top-wide product-thumb">
+                    <div class="thumb-height">
+                        <img class="thumbnail center-block" alt='@reader["Alt-Text"]' src='@imShow((byte[])reader["Binärdaten"], 0)' />
+                    </div>
+                    <small class="copyright">
+                        <a href='@reader["Copyright"]' target="_blank">Copyright</a>
+                    </small>
+                    <div class="text-center">@reader["Titel"]</div>
+                    <div class="text-center"><a href='/Detail?id=@reader["ID"]'>Details</a></div>
+                </div>
+                counter++;
+                if(counter < rowWidth){
+                    if(!reader.Read()){ break; }
+                }
+            }
+            counter=0;            
+        }
+        @:</div>
+    }
+    catch (Exception ex)
+    {
+        <p class="danger">
+            DANGER! in rot ;)
+            <br />@ex.Message
+        </p>
+    }
+    finally{
+        // Verbindung nicht mehr nötig
+        con.Close();
+    }
+}
+
+</div>

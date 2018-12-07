@@ -1,0 +1,33 @@
+@using MySql.Data.MySqlClient
+@using Microsoft.AspNetCore.Html
+
+
+
+<div class="col-md-3">
+    @using (Html.BeginForm("Liste","Mahlzeiten",FormMethod.Get))
+    {
+        <fieldset class="border padding-alert">
+            <legend>Speisenliste filtern</legend>
+            <div>
+                @Html.DropDownList("KategorieList")
+            </div>
+            <div>
+                @Html.CheckBox("verfugbar",false)
+                <label for="verfugbar">verfugbar</label>
+            </div>
+            <div>
+                @Html.CheckBox("vegetar",false)
+                <label for="vegetar">vegetarisch</label>
+            </div>
+            <div>
+                @Html.CheckBox("vegan",false)
+                <label for="vegan">vegan</label>
+            </div>
+            <div>
+                @Html.CheckBox("all",false)
+                <label for="all">Alle anzeigen</label>
+            </div>
+        </fieldset>
+        <input type="submit" class="btn btn-default" value="Filtern" />
+    }
+</div>

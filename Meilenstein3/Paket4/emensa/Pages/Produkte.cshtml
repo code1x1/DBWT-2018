@@ -1,0 +1,16 @@
+@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Produkte";
+    
+    ViewData["filter"] = Request.Query["filter"];
+    ViewData["verfugbar"] = Request.Query["verfugbar"];
+    ViewData["vegetar"] = Request.Query["vegetar"];
+    ViewData["vegan"] = Request.Query["vegan"];
+    ViewData["all"] = Request.Query["all"];
+}
+
+<div class="row margin-top-row">
+    <partial name="_productFilter" view-data="ViewData"/>
+    <partial name="_productListing" view-data="ViewData"/>
+</div>

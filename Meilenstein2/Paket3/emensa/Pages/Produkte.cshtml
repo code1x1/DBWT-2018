@@ -1,0 +1,10 @@
+@page
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Produkte";
+}
+
+<div class="row margin-top-row">
+    <partial name="_productFilter" />
+    <partial name="_productListing" />
+</div>

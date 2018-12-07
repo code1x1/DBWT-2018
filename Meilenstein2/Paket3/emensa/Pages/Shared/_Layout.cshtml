@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <!--<![endif]--> 
+<html class="no-js" lang="de"> 
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title> @ViewData["Title"]</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/css/site.css">
+        <script src="/js/jquery-3.3.1.min.js"></script>
+        <script src="/js/popper.min.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <div class="container">
+                <header class="row"><!-- div könnte header sein oder? -->
+                    <div class="col-4">
+                        <h1>e-Mensa</h1>
+                    </div>
+                    <nav class="col-6">
+                        <ul class="nav header"><!-- die Deko-Striche evtl schöner -->
+                            <li class="nav-item"><a class="nav-link" href="/">Start</a> </li>
+                            <li class="nav-item"><a class="nav-link" href="/Produkte">Mahlzeiten</a> </li>
+                            <li class="nav-item"><a class="nav-link active" href="#">Kontakt</a></li>
+                            <li class="nav-item"><a class="nav-link active" target="_blank" href="https://fh-aachen.de">FH Aachen</a></li>
+                        </ul>
+                    </nav>
+                    <div class="col-2">
+                        <form class="margin-top-close" action="http://www.google.de/search" method="GET">
+                            <label class="sr-only" for="suchbegriff">Suchbegriff</label>
+                            <input id="suchbegriff" name="q" type="search" class="form-control" placeholder="Suche"/>
+                            <input type="hidden" name="as_sitesearch" value="www.fh-aachen.de">
+                            <!-- button zum absenden der vollständigkeit halber? -->
+                        </form>
+                    </div>
+                </header>
+                 @RenderBody()
+       
+                <footer class="row"><!-- div könnte footer sein oder? -->
+                    <div class="col-3">(c) 2018 DBWT</div>
+                    <nav class="col-9">
+                        <ul class="nav footer"><!-- die Deko-Striche evtl schöner -->
+                            <li class="nav-item"><a class="nav-link" href="#">Login</a> </li>
+                            <li class="nav-item"><a class="nav-link" href="#">Registrieren</a> </li>
+                            <li class="nav-item"><a class="nav-link active" href="/Zutaten">Zutatenliste</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="/Impressum">Impressum</a></li>
+                            <li class="nav-item"><span class="mintgreen padding-left">@DateTime.Now.ToShortTimeString()</span></li>
+                        </ul>
+                    </nav>
+                </footer>
+        </div>
+
+    </body>
+</html>
