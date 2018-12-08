@@ -18,6 +18,12 @@ $(function(){
         
         //show the next fieldset
         next_fs.show(); 
+        if(next_fs.hasClass("account-typ")){
+            next_fs.children("div").css( "display", "none" );
+            next_fs.find("div." + $("input[name='subnutzer']:checked").val())
+                    .show();
+        }
+        //debugger;
         //hide the current fieldset with style
         current_fs.animate({opacity: 0}, {
             step: function(now, mx) {

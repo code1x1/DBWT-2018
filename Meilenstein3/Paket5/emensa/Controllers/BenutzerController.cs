@@ -9,6 +9,8 @@ using Microsoft.EntityFrameworkCore;
 using emensa.Models;
 using PasswordSecurity;
 using Microsoft.AspNetCore.Http;
+using MySql.Data.MySqlClient;
+using System.Diagnostics;
 
 namespace emensa.Controllers
 {
@@ -101,51 +103,86 @@ namespace emensa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register([Bind("Nutzername,EMail,Vorname,Nachname,Geburtsdatum,PasswordRepeat,Password")] Benutzer benutzer, string subnutzer)
+        public IActionResult Register([Bind("Nutzername,EMail,Vorname,Nachname,Geburtsdatum,PasswordRepeat,Password")] Benutzer benutzer, 
+                                                    string subnutzer, string grund, int buro, int tele, int matrikelnummer, string studiengang)
         {
-            if (ModelState.IsValid)
-            {
-                benutzer.createHashSalt();                
-                
 
-                switch(subnutzer){
-                    case "Gast":
-                        Gäste g = new Gäste();
-                        g.FkBenutzerNavigation = benutzer;
-                        g.Grund = "";
-                        g.Ablaufdatum = DateTime.Now.AddYears(1);
-                        _context.Add(benutzer);
-                        _context.Add(g);
-                    break;
-                    case "Mitarbeiter":
-                        FhAngehörige fhm = new FhAngehörige();
-                        fhm.FkBenutzerNavigation = benutzer;
-                        Mitarbeiter m = new Mitarbeiter();
-                        m.Büro = 1200;
-                        m.Telefon = 112;
-                        m.FkFhangeNavigation = fhm;
-                        _context.Add(benutzer);
-                        _context.Add(fhm);
-                        _context.Add(m);
-                    break;
-                    case "Student":
-                        FhAngehörige fhs = new FhAngehörige();
-                        fhs.FkBenutzerNavigation = benutzer;
-                        Student s = new Student();
-                        s.Matrikelnummer = 3242322;
-                        s.Studiengang = "ET";
-                        s.FkFhangeNavigation = fhs;
-                        _context.Add(benutzer);
-                        _context.Add(fhs);
-                        _context.Add(s);
-                    break;
+                benutzer.createHashSalt();
+                // innerhalb der Connection con eine Transaktion beginnen
+                MySqlConnection con = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString);
+                try{
+                    con.Open();
+                    MySqlTransaction tr = con.BeginTransaction();                
+                    try{       
+                            MySqlCommand cmd = new MySqlCommand();
+                            cmd.Connection = con;
+                            cmd.Transaction = tr;
+                            cmd.CommandText = $@"INSERT INTO `Benutzer` 
+                            (`Vorname`, `Nachname`, `E-Mail`, `Nutzername`, 
+                                    `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) 
+                            VALUES ('{benutzer.Vorname}', '{benutzer.Nachname}', '{benutzer.EMail}', '{benutzer.Nutzername}',
+                                    '{DateTime.Now.ToShortDateString()}', '{benutzer.Geburtsdatum}', '{benutzer.Salt}', '{benutzer.Hash}', 0);";
+                            int rows = cmd.ExecuteNonQuery(); // DML
+                            
+                            
+                            switch(subnutzer){
+                                case "Gast":
+                                    cmd.CommandText = $@"
+                                    INSERT INTO `Gäste` (`Grund`, Ablaufdatum, `fkBenutzer`) VALUES 
+                                    ('{grund}', '{DateTime.Now.AddYears(1).ToShortDateString()}', {cmd.LastInsertedId})";
+                                    rows = cmd.ExecuteNonQuery();
+                                break;
+                                case "Mitarbeiter":
+                                    cmd.CommandText = $@"
+                                    INSERT INTO `FH Angehörige` (`fkBenutzer`) 
+                                    VALUES ({cmd.LastInsertedId})";
+                                    rows = cmd.ExecuteNonQuery();
+
+                                    if(rows>0){
+                                        cmd.CommandText = $@"
+                                        INSERT INTO `Mitarbeiter` (`Büro`, `Telefon`, `fkFHange`) 
+                                        VALUES ({buro}, {tele}, {cmd.LastInsertedId})";
+                                        rows = cmd.ExecuteNonQuery();
+                                    }
+
+                                break;
+                                case "Student":
+                                    cmd.CommandText = $@"
+                                    INSERT INTO `FH Angehörige` (`fkBenutzer`) 
+                                    VALUES ({cmd.LastInsertedId})";
+                                    rows = cmd.ExecuteNonQuery();
+
+                                    if(rows>0){
+                                        cmd.CommandText = $@"
+                                        INSERT INTO `Student` (`Studiengang`, `Matrikelnummer`, `fkFHange`) 
+                                        VALUES ('{studiengang}', {matrikelnummer}, {cmd.LastInsertedId})";
+                                        rows = cmd.ExecuteNonQuery();
+                                    }
+                                break;
+                            }         
+
+
+                            // alle fehlerfrei?  commit!
+                            tr.Commit();
+                    } catch(Exception e){
+                        Debug.Print(e.StackTrace);
+                        // falls es Probleme gab
+                        tr.Rollback();
+                        return View(benutzer);
+
+                    } finally{
+                        
+                    }
+        
+                
+                }catch(Exception e){
+                    Debug.Print(e.StackTrace);
+                } finally{
+                    con.Close();    
                 }
 
-                
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Login));
-            }
-            return View(benutzer);
+            return RedirectToAction(nameof(Login));
+        
         }
 
 #region Scafflod

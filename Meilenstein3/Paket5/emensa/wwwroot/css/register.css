@@ -18,6 +18,10 @@ body {
     background: transparent;
 }
 
+.min-height-form-container{
+    min-height:600px;
+}
+
 /*form styles*/
 #msform {
     text-align: center;

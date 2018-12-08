@@ -14,8 +14,8 @@
 <div class="row">
     <div class="col-3">
         <p>Der Dienst <b>e-Mensa</b> ist noch beta.
-        Sie können bereits <a href="">Mahlzeiten</a> durchstöbern, aber noch nicht bestellen</p>
-        <p>Registrieren Sie sich <a href="">hier</a> um über die Veröffentlichung des Dienstes per Mail informiert zu werden</p>
+        Sie können bereits <a href="/Mahlzeiten/Liste">Mahlzeiten</a> durchstöbern, aber noch nicht bestellen</p>
+        <p>Registrieren Sie sich @Html.ActionLink("hier","Register","Benutzer",null,new {@class="nav-link"}) um über die Veröffentlichung des Dienstes per Mail informiert zu werden</p>
     </div>    
     <div class="col-9">
         <div class="row">
@@ -24,10 +24,10 @@
                 <p>... und gemeinsam mit Kommilitonen und Freunden essen.</p>
             </div>
             <div class="col-2">
-                <button type="button" class="btn btn-primary margin-top-close">
+                <a href="/Benutzer/Login" type="button" class="btn btn-primary margin-top-close">
                         <span class="iconicstroke-key-stroke"></span>
                     Anmelden
-                </button>
+                </a>
                 <button type="button" class="btn btn-primary margin-top-close">
                         <span class="iconicstroke-document-alt-stroke"></span>
                     Bestellen
