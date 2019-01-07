@@ -241,39 +241,39 @@ VIRTUAL AFTER Geburtsdatum;
 ALTER TABLE `Bestellungen`
 ADD COLUMN `Endpreis` FLOAT(10,2);
 
-ALTER TABLE `emensa`.`BestellungEnthältMahlzeit` 
+ALTER TABLE `BestellungEnthältMahlzeit` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkBestellungen`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`Freunde` 
+ALTER TABLE `Freunde` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `Freund`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`Gäste` 
+ALTER TABLE `Gäste` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkBenutzer`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`MahlzeitDeklarationen` 
+ALTER TABLE `MahlzeitDeklarationen` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkMahlzeit`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`MahlzeitenBilder` 
+ALTER TABLE `MahlzeitenBilder` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `IDMahlzeiten`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`MahlzeitenZutaten` 
+ALTER TABLE `MahlzeitenZutaten` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `IDMahlzeiten`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`Mitarbeiter` 
+ALTER TABLE `Mitarbeiter` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkFHange`,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`Preise` 
+ALTER TABLE `Preise` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT,
 ADD PRIMARY KEY (`ID`);
 
-ALTER TABLE `emensa`.`gehörtZuFachbereiche` 
+ALTER TABLE `gehörtZuFachbereiche` 
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkFHAnge`,
 ADD PRIMARY KEY (`ID`);
 
@@ -542,4 +542,11 @@ REPLACE INTO `Freunde` (`Nutzer`, `Freund`) VALUES (22, 24);
 
 
 -- Test Benutzer Passwort: jacky-home1990
-UPDATE `emensa`.`Benutzer` SET `Salt`='MZGVdewtzEtWpbN3tHQnTyYQ7mK02GUZ', `Hash`='RLibwr6SXlb0XLC4qr6FEBdZ' WHERE `Nummer`='3';
+UPDATE `Benutzer` SET `Salt`='MZGVdewtzEtWpbN3tHQnTyYQ7mK02GUZ', `Hash`='RLibwr6SXlb0XLC4qr6FEBdZ' WHERE `Nummer`='3';
+
+
+
+
+-- UPDATE `Benutzer` SET `Aktiv`='1' WHERE `Nummer`='#';
+
+
