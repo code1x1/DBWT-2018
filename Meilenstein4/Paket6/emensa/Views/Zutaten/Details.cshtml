@@ -1,0 +1,48 @@
+@model emensa.Models.Zutaten
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Zutaten</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Bio)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Bio)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Vegetarisch)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Vegetarisch)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Vegan)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Vegan)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Glutenfrei)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Glutenfrei)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

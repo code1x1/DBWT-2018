@@ -1,0 +1,60 @@
+@model emensa.Models.Benutzer
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Benutzer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nutzername)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Nutzername)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.EMail)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EMail)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Aktiv)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Aktiv)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Vorname)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Vorname)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Nachname)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Nachname)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Geburtsdatum)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Geburtsdatum)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Alter)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Alter)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Nummer">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

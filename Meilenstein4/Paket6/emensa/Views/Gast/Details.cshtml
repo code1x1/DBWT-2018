@@ -1,0 +1,36 @@
+@model emensa.Models.Gäste
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Gäste</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Grund)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Grund)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Ablaufdatum)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Ablaufdatum)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FkBenutzerNavigation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FkBenutzerNavigation.EMail)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

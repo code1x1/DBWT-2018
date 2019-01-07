@@ -1,0 +1,118 @@
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model emensa.Models.Mahlzeiten
+@using emensa.Controllers
+
+@{
+    ViewData["Title"] = "Details";
+
+ 
+}
+
+<div class="row">
+    <div class="col-md-3">
+
+    </div>
+    <div class="col-md-6">
+        <h2>Details für @Model.Name</h2>
+    </div>
+</div>
+
+<div class="row no-border margin-top-row">
+    @if(string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("user"))){
+        <partial name="_loginForm" view-data="ViewData" />
+    }
+    else{
+        <partial name="_loggedIn" view-data="ViewData" />
+    }
+    <div class="col-md-6">
+        <div>
+            <img class="splash" src='/Bilder/getImage/@MahlzeitenController.getImageID(Model.Id)' alt='@MahlzeitenController.getImageAltText(Model.Id)' />
+            <small class="copyright">
+                    <a href='@MahlzeitenController.getImageCopyright(Model.Id)' target="_blank">Copyright</a>
+            </small>
+        </div>
+        <div class="tabs-content">
+            
+
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">
+                            Beschreibung</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">
+                            Zutaten</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">
+                            Bewertungen</a>
+                    </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <p>
+                            @Model.Beschreibung.ToString()
+                    </p>
+            </div>
+            <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <ul class="list-unstyled">
+
+                        @{
+                            List<string> zutatenList = MahlzeitenController.zutatenListe(Model.Id);
+                            
+                            foreach(string item in zutatenList)
+                            {
+                                <li>@item</li>
+                            }
+                        }
+                    </ul>
+            </div>
+            <div class="tab-pane fade show active" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                    <form method="post" action="http://bc5.m2c-lab.fh-aachen.de/form.php">
+                        <input type="hidden" value="3005136" name="matrikelnummer" />
+                        <input type="hidden" value="beh" name="kontrolle" />
+                        <div class="form-group">
+                            <label for="bewertung-bemerkung">Bemerkung</label>
+                            <textarea name="bemerkung" id="bewertung-bemerkung" class="form-control" cols="15" rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="bewertung-benutzer">Benutzer</label>
+                            <input type="text" class="form-control" name="benutzer" id="bewertung-benutzer" />
+                        </div>
+                        <div class="form-group">
+                            <label for="bewertung-bewertung">Bewertung <span class="glyphicon glyphicon-star"></span></label>
+                            <select name="bewertung" class="form-control" id="bewertung-bewertung">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-default">Senden</button>
+                    </form>
+            </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div>
+            <span>@BenutzerController.printCurrentRole(HttpContextAccessor.HttpContext.Session)</span> Preis 
+            <div>
+            <b>
+                @MahlzeitenController.getPreis(Model.Id, HttpContextAccessor.HttpContext.Session) €
+            </b>
+            </div>
+        </div>
+        <div class="margin-top-row">
+            <button class="btn btn-default">
+                <span class="glyphicon glyphicon-cutlery"></span>
+                Vorbestellen
+            </button>
+        </div>
+    </div>
+</div>

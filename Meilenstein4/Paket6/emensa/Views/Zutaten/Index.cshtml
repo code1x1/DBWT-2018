@@ -1,0 +1,65 @@
+@model IEnumerable<emensa.Models.Zutaten>
+
+@{
+    ViewData["Title"] = "Zutatenliste";
+}
+
+<div class="row">
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Vegan) ?
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Vegetarisch) ?
+            </th>
+            <th scope="col">
+                @Html.DisplayNameFor(model => model.Glutenfrei) ?
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <th scope='row'>
+                <a href="http://www.google.de/search?q=@item.Name"  target="_blank" data-html="true" data-toggle="tooltip" data-placement="top" title='<span class="ttip">Suchen Sie im Web nach @item.Name</span>'>
+                @Html.DisplayFor(modelItem => item.Name) 
+                </a>
+                @Html.Raw(item.bioLogoString())
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vegetarisch)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Vegan)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Glutenfrei)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+</div>
+
+<script>
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+</script>

@@ -1,0 +1,36 @@
+@model emensa.Models.Student
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Student</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Studiengang)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Studiengang)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Matrikelnummer)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Matrikelnummer)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FkFhangeNavigation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FkFhangeNavigation.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.StudentId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

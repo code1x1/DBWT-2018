@@ -1,0 +1,51 @@
+@model emensa.Models.Mahlzeiten
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Mahlzeiten</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Beschreibung)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Beschreibung)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Vorrat)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Vorrat)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Verfügbar)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Verfügbar)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FkKategorieNavigation)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.FkKategorieNavigation.Bezeichnung)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
