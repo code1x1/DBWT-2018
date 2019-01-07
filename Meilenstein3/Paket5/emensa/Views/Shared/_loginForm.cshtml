@@ -12,7 +12,15 @@
                 <span class="input-group-addon" id="basic-addon1">
                     <span class="glyphicon glyphicon-user"></span>
                 </span>
-                <input type="text" name="Nutzername" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+                @{
+                    if(ViewData["LoginName"] != null){
+                        <input type="text" name="Nutzername" class="form-control" placeholder='Username' value='@ViewData["LoginName"]' aria-describedby="basic-addon1">
+                    }
+                    else{
+                        <input type="text" name="Nutzername" class="form-control" placeholder="Username" aria-describedby="basic-addon1">
+                    }
+                }
+                
             <div class="text-danger block">
                 @ViewData["NutzernameError"]
             </div>

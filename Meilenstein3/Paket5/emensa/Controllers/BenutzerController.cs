@@ -54,6 +54,7 @@ namespace emensa.Controllers
                 }
                 ViewData["LoginMessage"] = "Die eingegeben Logindaten wurden nicht gefunden!";
                 ViewData["PasswordError"] = "Password falsch";
+                ViewData["LoginName"] = benutzer.Nutzername;
                 
             }
             else{
