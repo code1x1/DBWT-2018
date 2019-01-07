@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PasswordSecurity\PasswordSecurity.csproj" />
+    <ProjectReference Include="..\..\..\PasswordSecurity\PasswordSecurity.csproj" />
   </ItemGroup>
 
 </Project>

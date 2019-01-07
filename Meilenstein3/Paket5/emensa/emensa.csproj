@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Paket4\PasswordSecurity\PasswordSecurity.csproj" />
+    <ProjectReference Include="..\..\..\PasswordSecurity\PasswordSecurity.csproj" />
   </ItemGroup>
   
 </Project>
