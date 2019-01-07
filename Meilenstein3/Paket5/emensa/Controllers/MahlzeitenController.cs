@@ -22,8 +22,12 @@ namespace emensa.Controllers
         // GET: Mahlzeiten
         public async Task<IActionResult> Liste(int? KategorieList, bool? verfugbar, bool? vegetar, bool? vegan, bool? all)
         {
-            ViewData["KategorieList"] = GetKategorieSelectList();
-
+            ViewBag.KategorieListe = _context.Kategorien.ToList<Kategorien>();
+            
+            
+            if(KategorieList != null){
+                ViewData["KategorieSelected"] = _context.Kategorien.Where(x => x.Id == KategorieList).First();
+            }
             IQueryable<emensa.Models.Mahlzeiten> emensaContext;
             
             emensaContext = _context.Mahlzeiten.Include(m => m.FkKategorieNavigation);
@@ -45,14 +49,6 @@ namespace emensa.Controllers
                 emensaContext = emensaContext.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegan != Convert.ToByte(vegan)));
 
             return View(await emensaContext.Take(8).ToListAsync());
-        }
-
-
-        private SelectList GetKategorieSelectList()
-        {
-            return new SelectList(_context.Kategorien.AsEnumerable()
-                                .Append(new Kategorien(){Bezeichnung = "", FkOberKategorie = null}), 
-                                "Id", "Bezeichnung", "FkOberKategorie");
         }
 
         public static int getImageID(int mahlzeitid){

@@ -9,7 +9,26 @@
         <fieldset class="border padding-alert">
             <legend>Speisenliste filtern</legend>
             <div>
-                @Html.DropDownList("KategorieList")
+                <select name="KategorieList">
+                            <option value=""></option>
+                    @{
+                        List<Kategorien> k = ((List<Kategorien>)ViewBag.KategorieListe);
+                        foreach (Kategorien item in k.Where(x=>x.FkOberKategorie==null))
+                        {
+                            <optgroup value="@item.Id"  label="@item.Bezeichnung">
+                                @foreach(Kategorien item2 in k.Where(x=>x.FkOberKategorie==((Kategorien)item).Id))
+                                {
+                                    if(((Kategorien)ViewData["KategorieSelected"]) != null && ((Kategorien)ViewData["KategorieSelected"]).Id == @item2.Id){
+                                        <option value="@item2.Id" selected>@item2.Bezeichnung</option>
+                                    }
+                                    else{
+                                        <option value="@item2.Id">@item2.Bezeichnung</option>
+                                    }
+                                }
+                            </optgroup>
+                        }
+                    }
+                </select>
             </div>
             <div>
                 @Html.CheckBox("verfugbar",false)
