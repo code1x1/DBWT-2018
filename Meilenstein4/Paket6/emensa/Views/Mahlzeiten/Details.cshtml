@@ -1,13 +1,8 @@
-@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @model emensa.Models.Mahlzeiten
 @using emensa.Controllers
 
 @{
     ViewData["Title"] = "Details";
-
- 
 }
 
 <div class="row">
@@ -109,10 +104,29 @@
             </div>
         </div>
         <div class="margin-top-row">
-            <button class="btn btn-default">
-                <span class="glyphicon glyphicon-cutlery"></span>
-                Vorbestellen
-            </button>
+            <form method="post">
+                <input type="hidden" name="Name" value="@Model.Name" />
+                <input type="hidden" name="Id" value="@Model.Id" />
+                <input type="submit" class="btn btn-default glyphicon glyphicon-cutlery" value="Vorbestellen" />
+            </form>
         </div>
     </div>
 </div>
+<script>
+    window.onload = function(){    
+        if(getCookie('bestellung') === ""){
+            setCookie('bestellung','{ "@Model.Id": "1" }',200);
+        }
+        else{
+            var cookieJson = JSON.parse(getCookie('bestellung'));
+            if(!NaN(cookieJson['@Model.Id'])){
+                cookieJson['@Model.Id'] += 1;
+            }
+            var gesamt = 0;
+            Object.keys(cookieJson).forEach(function(k){
+                console.log(k + ' - ' + cookieJson[k]);
+                gesamt += cookieJson[k];
+            });
+        }
+    }
+</script>

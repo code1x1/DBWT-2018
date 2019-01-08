@@ -1,0 +1,50 @@
+@model emensa.Models.Bestellungen
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Edit</title>
+</head>
+<body>
+
+<h4>Bestellungen</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Nummer" />
+            <div class="form-group">
+                <label asp-for="BestellZeitpunkt" class="control-label"></label>
+                <input asp-for="BestellZeitpunkt" class="form-control" />
+                <span asp-validation-for="BestellZeitpunkt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Abholzeitpunkt" class="control-label"></label>
+                <input asp-for="Abholzeitpunkt" class="form-control" />
+                <span asp-validation-for="Abholzeitpunkt" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Endpreis" class="control-label"></label>
+                <input asp-for="Endpreis" class="form-control" />
+                <span asp-validation-for="Endpreis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+</body>
+</html>

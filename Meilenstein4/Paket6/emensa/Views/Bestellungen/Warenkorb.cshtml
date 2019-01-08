@@ -1,0 +1,56 @@
+@model emensa.Models.Bestellungen
+
+@{
+    ViewData["Title"] = "Warenkorb";
+}
+
+
+<h3>Warenkorb</h3>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create">
+            <h5>Vorbestellungen als Mitarbeiter</h5>
+            <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Mahlzeit</th>
+      <th scope="col">Einzelpreis</th>
+      <th scope="col">Anzahl</th>
+      <th scope="col">Gesamtpreis</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>mdo</td>
+        <td>mdo</td>
+    </tr>
+    <tr>
+        <td>Alle löschen</td>
+        <td>Änderungen übernehmen</td>
+        <td>Diese Bestellung kostet: </td>
+        <td></td>
+        <td>
+            <div class="border-mintgreen" style="width:4em">
+            10,50 €
+            </div>
+        </td>
+    </tr>
+  </tbody>
+</table>
+<div>
+    Wann kommen Sie das Essen abholen: 
+    <select>
+        <option>10:15</option>
+    </select>
+</div>
+            <div class="form-group">
+                <input type="submit" value="Jetzt kostenpflichtig vorbestellen." class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>

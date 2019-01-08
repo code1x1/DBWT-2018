@@ -42,7 +42,6 @@ namespace emensa
             );
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDistributedMemoryCache();
-
             services.AddSession(options =>
             {
                 // Set a short timeout for easy testing.

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using emensa.Models;
 using Microsoft.AspNetCore.Http;
+using emensa.Extension;
+using Newtonsoft.Json;
 
 namespace emensa.Controllers
 {
@@ -22,8 +24,6 @@ namespace emensa.Controllers
         // GET: Mahlzeiten
         public async Task<IActionResult> Liste(int? KategorieList, bool? verfugbar, bool? vegetar, bool? vegan, bool? all)
         {
-            ViewBag.KategorieListe = _context.Kategorien.ToList<Kategorien>();
-            
             
             if(KategorieList != null){
                 ViewData["KategorieSelected"] = _context.Kategorien.Where(x => x.Id == KategorieList).First();
@@ -49,6 +49,30 @@ namespace emensa.Controllers
                 emensaContext = emensaContext.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegan != Convert.ToByte(vegan)));
 
             return View(await emensaContext.Take(8).ToListAsync());
+        }
+
+        // POST: Mahlzeiten/Details/5
+        [HttpPost]
+        public async Task<IActionResult> Details([Bind("Id,Name")] Mahlzeiten mz)
+        {
+
+            int? id = mz.Id;
+            
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var mahlzeiten = await _context.Mahlzeiten
+                .Include(m => m.FkKategorieNavigation)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (mahlzeiten == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["addMeal"] = true;
+            return View(mahlzeiten);
         }
 
         public static int getImageID(int mahlzeitid){
@@ -119,6 +143,7 @@ namespace emensa.Controllers
         // GET: Mahlzeiten/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null)
             {
                 return NotFound();

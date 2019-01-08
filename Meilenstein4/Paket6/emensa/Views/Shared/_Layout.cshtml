@@ -32,6 +32,7 @@
                             <li class="nav-item">@Html.ActionLink("Start","Start","Home",null,new {@class="nav-link"}) </li>
                             <li class="nav-item">@Html.ActionLink("Mahlzeiten","Liste","Mahlzeiten",null,new {@class="nav-link"}) </li>
                             <li class="nav-item"><a class="nav-link active" href="#">Kontakt</a></li>
+                            <li class="nav-item"><a class="nav-link active" asp-action="Warenkorb" asp-controller="Bestellungen">Bestellungen <span id="cart-count"></span></a></li>
                             <li class="nav-item"><a class="nav-link active" target="_blank" href="https://fh-aachen.de">FH Aachen</a></li>
                         </ul>
                     </nav>
@@ -60,6 +61,6 @@
                 </footer>
         </div>
         @await RenderSectionAsync("Scripts", false)
-        
+        <script src="~/js/bestellung.js"></script>
     </body>
 </html>
