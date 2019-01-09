@@ -13,7 +13,6 @@
         <h2>Details für @Model.Name</h2>
     </div>
 </div>
-
 <div class="row no-border margin-top-row">
     @if(string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("user"))){
         <partial name="_loginForm" view-data="ViewData" />
@@ -107,26 +106,12 @@
             <form method="post">
                 <input type="hidden" name="Name" value="@Model.Name" />
                 <input type="hidden" name="Id" value="@Model.Id" />
-                <input type="submit" class="btn btn-default glyphicon glyphicon-cutlery" value="Vorbestellen" />
+                <input type="submit" class="btn btn-default glyphicon glyphicon-cutlery" value="Vorbestellen" @{
+                    if(Model.Vorrat < 1){
+                        @: disabled
+                    }
+                } />
             </form>
         </div>
     </div>
 </div>
-<script>
-    window.onload = function(){    
-        if(getCookie('bestellung') === ""){
-            setCookie('bestellung','{ "@Model.Id": "1" }',200);
-        }
-        else{
-            var cookieJson = JSON.parse(getCookie('bestellung'));
-            if(!NaN(cookieJson['@Model.Id'])){
-                cookieJson['@Model.Id'] += 1;
-            }
-            var gesamt = 0;
-            Object.keys(cookieJson).forEach(function(k){
-                console.log(k + ' - ' + cookieJson[k]);
-                gesamt += cookieJson[k];
-            });
-        }
-    }
-</script>

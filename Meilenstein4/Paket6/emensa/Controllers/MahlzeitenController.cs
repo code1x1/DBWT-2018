@@ -14,7 +14,9 @@ namespace emensa.Controllers
 {
     public class MahlzeitenController : Controller
     {
+        //https://www.c-sharpcorner.com/article/asp-net-core-working-with-cookie/
         private readonly emensaContext _context;
+        private CookieWrapper _cookie;
 
         public MahlzeitenController(emensaContext context)
         {
@@ -24,38 +26,37 @@ namespace emensa.Controllers
         // GET: Mahlzeiten
         public async Task<IActionResult> Liste(int? KategorieList, bool? verfugbar, bool? vegetar, bool? vegan, bool? all)
         {
-            
+            ViewData["KategorieListe"] = _context.Kategorien.ToList();
             if(KategorieList != null){
                 ViewData["KategorieSelected"] = _context.Kategorien.Where(x => x.Id == KategorieList).First();
             }
-            IQueryable<emensa.Models.Mahlzeiten> emensaContext;
+            IQueryable<emensa.Models.Mahlzeiten> mahlzeiten;
             
-            emensaContext = _context.Mahlzeiten.Include(m => m.FkKategorieNavigation);
+            mahlzeiten = _context.Mahlzeiten.Include(m => m.FkKategorieNavigation);
             
             if(true == all){
-                return View(await emensaContext.Take(8).ToListAsync());
+                return View(await mahlzeiten.Take(8).ToListAsync());
             }
 
             if(KategorieList!= null && KategorieList!= 0)
-                emensaContext = emensaContext.Where(x => x.FkKategorieNavigation.Id == KategorieList);
+                mahlzeiten = mahlzeiten.Where(x => x.FkKategorieNavigation.Id == KategorieList);
 
             if(true == verfugbar)
-                emensaContext = emensaContext.Where(x => x.Vorrat > 0);
+                mahlzeiten = mahlzeiten.Where(x => x.Vorrat > 0);
 
             if(true == vegetar)
-                emensaContext = emensaContext.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegetarisch != Convert.ToByte(vegetar)));
+                mahlzeiten = mahlzeiten.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegetarisch != Convert.ToByte(vegetar)));
 
             if(true == vegan)
-                emensaContext = emensaContext.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegan != Convert.ToByte(vegan)));
+                mahlzeiten = mahlzeiten.Include(m => m.MahlzeitenZutaten).Where(x => x.MahlzeitenZutaten.Any(y => y.IdzutatenNavigation.Vegan != Convert.ToByte(vegan)));
 
-            return View(await emensaContext.Take(8).ToListAsync());
+            return View(await mahlzeiten.Take(8).ToListAsync());
         }
 
         // POST: Mahlzeiten/Details/5
         [HttpPost]
         public async Task<IActionResult> Details([Bind("Id,Name")] Mahlzeiten mz)
         {
-
             int? id = mz.Id;
             
             if (id == null)
@@ -70,8 +71,11 @@ namespace emensa.Controllers
             {
                 return NotFound();
             }
+        
+            _cookie = new CookieWrapper(Request,Response,ViewData);
+            _cookie.addMahlzeit(mahlzeiten);
+            
 
-            ViewData["addMeal"] = true;
             return View(mahlzeiten);
         }
 
