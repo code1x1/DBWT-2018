@@ -29,7 +29,9 @@ namespace emensa
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-                options.CheckConsentNeeded = context => true;
+                // wenn das hier auf true steht werden keine cookies erstellt
+                // ausser der .AspNetCore.Antiforgery cookie
+                options.CheckConsentNeeded = context => false;  
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
@@ -40,7 +42,7 @@ namespace emensa
             services.AddMvc().AddRazorPagesOptions(options =>
                 options.Conventions.AddPageRoute("/Start","")
             );
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddHttpContextAccessor();
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
@@ -49,7 +51,7 @@ namespace emensa
                 options.Cookie.HttpOnly = true;
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
