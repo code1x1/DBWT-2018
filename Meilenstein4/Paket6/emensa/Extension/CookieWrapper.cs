@@ -46,5 +46,23 @@ namespace emensa.Extension{
             _response.Cookies.Append("bestellung",JsonConvert.SerializeObject(bestellungDict));
             return bestellungDict;
         }
+
+        internal Dictionary<string,int> getMahlzeiten()
+        {
+            string bestellung = _request.Cookies["bestellung"];
+            Dictionary<string,int> bestellungDict;
+            try
+            {
+                bestellungDict = JsonConvert.DeserializeObject<Dictionary<string,int>>(bestellung);
+            }
+            catch (System.Exception)
+            {
+                bestellungDict = new Dictionary<string,int>();
+            }
+            
+            return bestellungDict;
+        }
+
     }
+
 }

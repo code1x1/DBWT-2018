@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using emensa.Models;
 using emensa.ViewModels;
+using emensa.Extension;
 
 namespace emensa.Controllers
 {
@@ -23,12 +24,15 @@ namespace emensa.Controllers
         // GET: Bestellungen/Warenkorb
         public IActionResult Warenkorb()
         {
+            CookieWrapper cw = new CookieWrapper(Request,Response,ViewData);
+            ViewData["Warenkorb"] = cw.getMahlzeiten();
             var mahlzeiten = 
                 _context.Mahlzeiten
                 .Join(_context.Preise,
                     mahlzeit => mahlzeit.Id,
                     preis => preis.FkMahlzeiten,
-                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis });
+                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis })
+                .Where(mp => cw.getMahlzeiten().Keys.Contains(mp.Mahlzeiten.Id.ToString()));
             
             return View(mahlzeiten);
         }

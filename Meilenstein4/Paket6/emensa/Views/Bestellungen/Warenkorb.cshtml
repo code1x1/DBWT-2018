@@ -4,6 +4,7 @@
 
 @{
     ViewData["Title"] = "Warenkorb";
+    Dictionary<string,int> cookies = (Dictionary<string,int>)ViewData["Warenkorb"];
 }
 
 
@@ -47,7 +48,7 @@
                 @Html.DisplayFor(modelItem => item.Preise.Gastpreis)
             </td>
             <td>
-                100
+                @cookies[Convert.ToString(item.Mahlzeiten.Id)]
             </td>
         </tr>
 }
