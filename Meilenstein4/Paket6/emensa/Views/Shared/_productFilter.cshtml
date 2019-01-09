@@ -12,7 +12,7 @@
                 <select name="KategorieList">
                             <option value=""></option>
                     @{
-                        List<Kategorien> k = ((List<Kategorien>)ViewBag.KategorieListe);
+                        List<Kategorien> k = ((List<Kategorien>)ViewData["KategorieListe"]);
                         foreach (Kategorien item in k.Where(x=>x.FkOberKategorie==null))
                         {
                             <optgroup value="@item.Id"  label="@item.Bezeichnung">
