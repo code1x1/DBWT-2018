@@ -1,3 +1,4 @@
+@inject IHttpContextAccessor httpContextaccessor
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -32,7 +33,10 @@
                             <li class="nav-item">@Html.ActionLink("Start","Start","Home",null,new {@class="nav-link"}) </li>
                             <li class="nav-item">@Html.ActionLink("Mahlzeiten","Liste","Mahlzeiten",null,new {@class="nav-link"}) </li>
                             <li class="nav-item"><a class="nav-link active" href="#">Kontakt</a></li>
-                            <li class="nav-item"><a class="nav-link active" asp-action="Warenkorb" asp-controller="Bestellungen">Bestellungen <span id="cart-count"></span></a></li>
+                            <li class="nav-item"><a class="nav-link active" asp-action="Warenkorb" asp-controller="Bestellungen">Bestellungen 
+                                <span class="cart-count">
+                                    @emensa.Extension.HttpRequestExtensions.BestellungCounter(Context.Request, ViewData)  
+                                </span></a></li>
                             <li class="nav-item"><a class="nav-link active" target="_blank" href="https://fh-aachen.de">FH Aachen</a></li>
                         </ul>
                     </nav>
