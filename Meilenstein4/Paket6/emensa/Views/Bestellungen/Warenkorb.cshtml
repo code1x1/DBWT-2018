@@ -1,4 +1,6 @@
-@model emensa.Models.Bestellungen
+@using emensa.Models
+@using emensa.ViewModels
+@model IEnumerable<MahlzeitenPreise>
 
 @{
     ViewData["Title"] = "Warenkorb";
@@ -11,24 +13,44 @@
     <div class="col-md-12">
         <form asp-action="Create">
             <h5>Vorbestellungen als Mitarbeiter</h5>
-            <table class="table">
-  <thead>
-    <tr>
-      <th scope="col">ID</th>
-      <th scope="col">Mahlzeit</th>
-      <th scope="col">Einzelpreis</th>
-      <th scope="col">Anzahl</th>
-      <th scope="col">Gesamtpreis</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>mdo</td>
-        <td>mdo</td>
-    </tr>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Mahlzeit
+            </th>
+            <th>
+                Einzelpreis
+            </th>
+            <th>
+                Anzahl
+            </th>
+            <th>
+                Gesamtpreis
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mahlzeiten.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mahlzeiten.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Preise.Gastpreis)
+            </td>
+            <td>
+                100
+            </td>
+        </tr>
+}
     <tr>
         <td>Alle löschen</td>
         <td>Änderungen übernehmen</td>
@@ -40,8 +62,11 @@
             </div>
         </td>
     </tr>
-  </tbody>
+    </tbody>
 </table>
+
+
+
 <div>
     Wann kommen Sie das Essen abholen: 
     <select>

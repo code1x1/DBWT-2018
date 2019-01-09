@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using emensa.Models;
+using emensa.ViewModels;
 
 namespace emensa.Controllers
 {
@@ -19,33 +20,35 @@ namespace emensa.Controllers
         }
 
 
-                // GET: Bestellungen/Create
+        // GET: Bestellungen/Warenkorb
         public IActionResult Warenkorb()
         {
-            return View();
+            var mahlzeiten = 
+                _context.Mahlzeiten
+                .Join(_context.Preise,
+                    mahlzeit => mahlzeit.Id,
+                    preis => preis.FkMahlzeiten,
+                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis });
+            
+            return View(mahlzeiten);
         }
 
-        // POST: Bestellungen/Create
+        // POST: Bestellungen/Warenkorb
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Warenkorb([Bind("Nummer,BestellZeitpunkt,Abholzeitpunkt,Endpreis")] Bestellungen bestellungen)
+        public IActionResult Warenkorb([Bind("Id")]Mahlzeiten[] mahlzeitens)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(bestellungen);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(bestellungen);
+
+            return View(mahlzeitens);
         }
 
 
 
 
 
-    #region Scaffolding
+        #region Scaffolding
 
         // GET: Bestellungen
         public async Task<IActionResult> Index()
