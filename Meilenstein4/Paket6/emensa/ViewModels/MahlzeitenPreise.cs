@@ -7,5 +7,7 @@ namespace emensa.ViewModels {
     {
         public Mahlzeiten Mahlzeiten { get; internal set; }
         public Preise Preise { get; internal set; }
+
+        public int Anzahl { get; set; }
     }
 }

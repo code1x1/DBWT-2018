@@ -14,6 +14,7 @@ namespace emensa.Controllers
     public class BestellungenController : Controller
     {
         private readonly emensaContext _context;
+        private CookieWrapper _cookie;
 
         public BestellungenController(emensaContext context)
         {
@@ -25,13 +26,12 @@ namespace emensa.Controllers
         public IActionResult Warenkorb()
         {
             CookieWrapper cw = new CookieWrapper(Request,Response,ViewData);
-            ViewData["Warenkorb"] = cw.getMahlzeiten();
             var mahlzeiten = 
                 _context.Mahlzeiten
                 .Join(_context.Preise,
                     mahlzeit => mahlzeit.Id,
                     preis => preis.FkMahlzeiten,
-                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis })
+                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis, Anzahl = ((Dictionary<string,int>)cw.getMahlzeiten())[mahlzeit.Id.ToString()] })
                 .Where(mp => cw.getMahlzeiten().Keys.Contains(mp.Mahlzeiten.Id.ToString()));
             
             return View(mahlzeiten);
@@ -42,13 +42,31 @@ namespace emensa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Warenkorb([Bind("Id")]Mahlzeiten[] mahlzeitens)
+        public IActionResult Warenkorb(Tuple<int,int>[] array)
         {
+            _cookie = new CookieWrapper(Request,Response,ViewData);
+            _cookie.modCookie(array);
+            var mahlzeiten = 
+                _context.Mahlzeiten
+                .Join(_context.Preise,
+                    mahlzeit => mahlzeit.Id,
+                    preis => preis.FkMahlzeiten,
+                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis, Anzahl = ((Dictionary<string,int>)_cookie.getMahlzeiten())[mahlzeit.Id.ToString()] })
+                .Where(mp => _cookie.getMahlzeiten().Keys.Contains(mp.Mahlzeiten.Id.ToString()));
 
-            return View(mahlzeitens);
+            return View(mahlzeiten);
+        } 
+
+
+        // GET: Bestellungen/DeleteWarenkorb
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        public IActionResult DeleteWarenkorb()
+        {
+            _cookie = new CookieWrapper(Request,Response,ViewData);
+            _cookie.clearAll();
+             return RedirectToAction(nameof(Warenkorb));
         }
-
-
 
 
 

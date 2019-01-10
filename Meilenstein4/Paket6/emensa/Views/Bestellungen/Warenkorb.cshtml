@@ -4,7 +4,7 @@
 
 @{
     ViewData["Title"] = "Warenkorb";
-    Dictionary<string,int> cookies = (Dictionary<string,int>)ViewData["Warenkorb"];
+    float gesamtPreis = 0;
 }
 
 
@@ -14,64 +14,96 @@
     <div class="col-md-12">
         <form asp-action="Warenkorb">
             <h5>Vorbestellungen als Mitarbeiter</h5>
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Mahlzeit
+                </th>
+                <th>
+                    Einzelpreis
+                </th>
+                <th>
+                    Anzahl
+                </th>
+                <th>
+                    Gesamtpreis
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        @{
+            
+            if(Model.ToList().Count != 0){
+                foreach (var item in Model) {
+                gesamtPreis += (item.Preise.Gastpreis * item.Anzahl);
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Mahlzeiten.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Mahlzeiten.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Preise.Gastpreis) €
+                        </td>
+                        <td>
+                            <input type="number" name="anzahl_@item.Mahlzeiten.Id" min="0" max="100" value="@item.Anzahl">
+                        </td>
+                        <td>
+                            @(item.Anzahl * item.Preise.Gastpreis) €
+                        </td>
+                    </tr>
+                }
+            } else{
+                <tr>
+                    <td class="alert-info margin-top-row padding-alert">
+                        Ihr Warenkorb ist leer!
+                    </td>
+                    <td class="alert-info margin-top-row padding-alert"></td>
+                    <td class="alert-info margin-top-row padding-alert"></td>
+                    <td class="alert-info margin-top-row padding-alert"></td>
+                    <td class="alert-info margin-top-row padding-alert"></td>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                ID
-            </th>
-            <th>
-                Mahlzeit
-            </th>
-            <th>
-                Einzelpreis
-            </th>
-            <th>
-                Anzahl
-            </th>
-            <th>
-                Gesamtpreis
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
+                </tr>
+            }
+        }
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Mahlzeiten.Id)
+            <a asp-action="DeleteWarenkorb">Alle löschen</a>
             </td>
+            <td><input type="submit" value="Änderungen übernehmen" class="button-link mintgreen" /></td>
+            <td>Diese Bestellung kostet: </td>
+            <td></td>
             <td>
-                @Html.DisplayFor(modelItem => item.Mahlzeiten.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Preise.Gastpreis)
-            </td>
-            <td>
-                @cookies[Convert.ToString(item.Mahlzeiten.Id)]
+                <div class="border-mintgreen" style="width:7em; text-align:center">
+                @(gesamtPreis) €
+                </div>
             </td>
         </tr>
-}
-    <tr>
-        <td>Alle löschen</td>
-        <td>Änderungen übernehmen</td>
-        <td>Diese Bestellung kostet: </td>
-        <td></td>
-        <td>
-            <div class="border-mintgreen" style="width:4em">
-            10,50 €
-            </div>
-        </td>
-    </tr>
-    </tbody>
-</table>
-
+        </tbody>
+    </table>
+</form>
 
 
 <div>
     Wann kommen Sie das Essen abholen: 
     <select>
-        <option>10:15</option>
+        @{
+            for(int x = 0; x < 12; x++){
+                int delta = 30;
+                int rest = 0;
+                if((DateTime.Now.Minute % 15) != 0){
+                rest = 15 - (DateTime.Now.Minute % 15);
+                }
+                <option>@(DateTime.Now.AddMinutes((15*x) + delta + rest).ToShortTimeString())</option>
+            }
+        }
+        
     </select>
 </div>
             <div class="form-group">

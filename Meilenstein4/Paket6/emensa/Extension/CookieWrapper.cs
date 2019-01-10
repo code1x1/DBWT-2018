@@ -63,6 +63,21 @@ namespace emensa.Extension{
             return bestellungDict;
         }
 
+        internal void modCookie(Tuple<int, int>[] arrayMod)
+        {
+            Dictionary<string,int> bestellungDict = new Dictionary<string, int>();
+            foreach (var item in arrayMod)
+            {
+                if(item.Item1 != 0)
+                bestellungDict.Add(Convert.ToString(item.Item1),item.Item2);
+            }
+            _response.Cookies.Append("bestellung",JsonConvert.SerializeObject(bestellungDict));
+        }
+
+        internal void clearAll()
+        {
+            _response.Cookies.Delete("bestellung");
+        }
     }
 
 }

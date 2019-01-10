@@ -103,6 +103,15 @@
             </div>
         </div>
         <div class="margin-top-row">
+            @{
+                if(ViewData["vorbestellt"] != null){                      
+                    <div class="alert-info margin-top-row padding-alert">
+                        <p>
+                            @ViewData["vorbestellt"]
+                        </p>
+                    </div>
+                }
+            }
             <form method="post">
                 <input type="hidden" name="Name" value="@Model.Name" />
                 <input type="hidden" name="Id" value="@Model.Id" />
