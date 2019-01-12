@@ -72,7 +72,7 @@ namespace emensa.Controllers
                 return NotFound();
             }
             ViewData["vorbestellt"] = $"{mahlzeiten.Name} zur Bestellung hinzugefügt";
-            _cookie = new CookieWrapper(Request,Response,ViewData);
+            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
             _cookie.addMahlzeit(mahlzeiten);
             
 

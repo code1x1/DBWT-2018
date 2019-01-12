@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using emensa.Models;
 using emensa.ViewModels;
 using emensa.Extension;
+using Microsoft.AspNetCore.Http;
 
 namespace emensa.Controllers
 {
@@ -25,27 +26,7 @@ namespace emensa.Controllers
         // GET: Bestellungen/Warenkorb
         public IActionResult Warenkorb()
         {
-            CookieWrapper cw = new CookieWrapper(Request,Response,ViewData);
-            var mahlzeiten = 
-                _context.Mahlzeiten
-                .Join(_context.Preise,
-                    mahlzeit => mahlzeit.Id,
-                    preis => preis.FkMahlzeiten,
-                    (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis, Anzahl = ((Dictionary<string,int>)cw.getMahlzeiten())[mahlzeit.Id.ToString()] })
-                .Where(mp => cw.getMahlzeiten().Keys.Contains(mp.Mahlzeiten.Id.ToString()));
-            
-            return View(mahlzeiten);
-        }
-
-        // POST: Bestellungen/Warenkorb
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Warenkorb(Tuple<int,int>[] array)
-        {
-            _cookie = new CookieWrapper(Request,Response,ViewData);
-            _cookie.modCookie(array);
+            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
             var mahlzeiten = 
                 _context.Mahlzeiten
                 .Join(_context.Preise,
@@ -53,8 +34,29 @@ namespace emensa.Controllers
                     preis => preis.FkMahlzeiten,
                     (mahlzeit, preis) => new MahlzeitenPreise { Mahlzeiten = mahlzeit, Preise = preis, Anzahl = ((Dictionary<string,int>)_cookie.getMahlzeiten())[mahlzeit.Id.ToString()] })
                 .Where(mp => _cookie.getMahlzeiten().Keys.Contains(mp.Mahlzeiten.Id.ToString()));
-
+            
             return View(mahlzeiten);
+        }
+
+        // POST: Bestellungen/Warenkorb
+        // Update der Warenkorb Anzahl
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Warenkorb(int[] arrayID, int[] arrayAnzahl)
+        {
+            Dictionary<string, int> dict = new Dictionary<string, int>();
+            for(int i=0;i<arrayID.Length;i++)
+            {
+                if(arrayAnzahl[i] != 0){
+                dict.Add(Convert.ToString(arrayID[i]), arrayAnzahl[i]);
+                }
+                
+            }
+            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
+            _cookie.modCookie(dict);
+            return RedirectToAction(nameof(Warenkorb));
         } 
 
 
@@ -63,12 +65,72 @@ namespace emensa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         public IActionResult DeleteWarenkorb()
         {
-            _cookie = new CookieWrapper(Request,Response,ViewData);
+            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
             _cookie.clearAll();
              return RedirectToAction(nameof(Warenkorb));
         }
 
 
+        // POST: Bestellungen/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SubmitWarenkorb(DateTime abholzeit)
+        {
+            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
+           
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                var endpreisQuery = _context.Mahlzeiten
+                .Where(mp => _cookie.getMahlzeiten().Keys.Contains(mp.Id.ToString()))
+                .Join(_context.Preise,
+                    mahlzeit => mahlzeit.Id,
+                    preis => preis.FkMahlzeiten,
+                    (mahlzeit, preis) => new { preis.Gastpreis, preis.MaPreis, preis.Studentpreis, mahlzeit.Id});
+
+                float endpreis = endpreisQuery.Sum(x => x.Gastpreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
+
+                if(HttpContext.Session.GetString("role") == "Student") {
+                    endpreis = endpreisQuery.Sum(x => x.Studentpreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
+                } else if(HttpContext.Session.GetString("role") == "Mitarbeiter"){
+                    endpreis = endpreisQuery.Sum(x => x.MaPreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
+                }
+
+                try
+                {
+                    Bestellungen bestellungen = new Bestellungen();
+                    bestellungen.Abholzeitpunkt = abholzeit;
+                    bestellungen.BestellZeitpunkt = DateTime.Now;
+                    bestellungen.Endpreis = endpreis;
+                    _context.Add(bestellungen);
+
+                    foreach (var item in _cookie.getMahlzeiten())
+                    {
+                        BestellungEnthältMahlzeit bestellungMahlzeit = new BestellungEnthältMahlzeit(); 
+                        bestellungMahlzeit.Anzahl = item.Value;
+                        bestellungMahlzeit.FkBestellungen = bestellungen.Nummer;
+                        bestellungMahlzeit.FkMahlzeit = Convert.ToInt32(item.Key);        
+                        _context.Add(bestellungMahlzeit);
+
+                    }
+                    // Commit transaction if all commands succeed, transaction will auto-rollback
+                    // when disposed if either commands fails
+                    transaction.Commit();
+                    TempData["SuccessSubmit"] = "Die Bestellung wurde kostenpflichtig verbucht!";
+                    _cookie.clearAll();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    // TODO: Handle failure
+                    TempData["SuccessSubmit"] = "Die Bestellung konnte nicht ausgeführt werden!";
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Warenkorb));
+        }
 
         #region Scaffolding
 
@@ -117,6 +179,8 @@ namespace emensa.Controllers
             }
             return View(bestellungen);
         }
+
+
 
         // GET: Bestellungen/Edit/5
         public async Task<IActionResult> Edit(int? id)

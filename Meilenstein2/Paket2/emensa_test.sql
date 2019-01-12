@@ -91,8 +91,11 @@ CREATE TABLE `Mitarbeiter`(
 
 CREATE TABLE `Bestellungen`(
 	Nummer INT NOT NULL AUTO_INCREMENT,
+    BenutzerNummer INT NOT NULL,
     BestellZeitpunkt TIMESTAMP NOT NULL DEFAULT NOW(),
     Abholzeitpunkt TIMESTAMP,
+    CONSTRAINT c_fkBenutzerNummer FOREIGN KEY(BenutzerNummer) 
+		REFERENCES `Benutzer`(Nummer) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT c_AbholzeitBestellzeit 
 		CHECK(Abholzeitpunkt > BestellZeitpunkt OR Abholzeitpunkt = NULL),
     CONSTRAINT c_pkBestellungen PRIMARY KEY(Nummer)
@@ -123,6 +126,7 @@ CREATE TABLE `Mahlzeiten`(
     Beschreibung TEXT NOT NULL,
     Vorrat INT NOT NULL,
     fkKategorie INT,
+    CONSTRAINT c_Vorrat CHECK (Vorrat > -1),
     CONSTRAINT c_fkMahlzeitenKategorie FOREIGN KEY(fkKategorie) 
 		REFERENCES `Kategorien`(ID),
     CONSTRAINT c_pkMahlzeiten PRIMARY KEY(ID)
@@ -548,5 +552,18 @@ UPDATE `Benutzer` SET `Salt`='MZGVdewtzEtWpbN3tHQnTyYQ7mK02GUZ', `Hash`='RLibwr6
 
 
 -- UPDATE `Benutzer` SET `Aktiv`='1' WHERE `Nummer`='#';
+
+DROP TRIGGER IF EXISTS updateVorrat;
+DELIMITER //
+CREATE TRIGGER updateVorrat
+AFTER INSERT ON BestellungEnthältMahlzeit
+FOR EACH ROW
+BEGIN
+	UPDATE Mahlzeiten 
+    SET Mahlzeiten.Vorrat = Mahlzeiten.Vorrat - NEW.Anzahl 
+    WHERE Mahlzeiten.ID = NEW.fkMahlzeit;
+END; //
+
+DELIMITER ;
 
 

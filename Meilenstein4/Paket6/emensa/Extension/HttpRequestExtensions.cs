@@ -8,14 +8,14 @@ namespace emensa.Extension{
 
     public static class HttpRequestExtensions
     {
-        public static string BestellungCounter(HttpRequest request, ViewDataDictionary viewData)
+        public static string BestellungCounter(HttpRequest request, ViewDataDictionary viewData, ISession session)
         {
             if (request == null)
             {
                 throw new System.ArgumentNullException(nameof(request));
             }
 
-            if (request.Cookies["bestellung"] == null && viewData["bestellungCounter"] == null){
+            if (request.Cookies["bestellung" + session.GetString("user")] == null && viewData["bestellungCounter"] == null){
                 return "(0)";
             }
             else if(viewData["bestellungCounter"] != null){
@@ -25,7 +25,7 @@ namespace emensa.Extension{
                 Dictionary<string,int> bestellungDict;
                 try
                 {
-                    bestellungDict = JsonConvert.DeserializeObject<Dictionary<string,int>>(request.Cookies["bestellung"]);
+                    bestellungDict = JsonConvert.DeserializeObject<Dictionary<string,int>>(request.Cookies["bestellung" + session.GetString("user")]);
                 }
                 catch (System.Exception)
                 {

@@ -17,16 +17,19 @@ namespace emensa.Extension{
         private HttpResponse _response;
         private ViewDataDictionary _viewData;
 
-        public CookieWrapper(HttpRequest request, HttpResponse response, ViewDataDictionary viewData)
+        public ISession _session { get; private set; }
+
+        public CookieWrapper(HttpRequest request, HttpResponse response, ViewDataDictionary viewData, ISession session)
         {
             _request = request;
             _response = response;
             _viewData = viewData;
+            _session = session;
         }
 
         internal Dictionary<string,int> addMahlzeit(Mahlzeiten mz)
         {
-            string bestellung = _request.Cookies["bestellung"];
+            string bestellung = _request.Cookies["bestellung" + _session.GetString("user")];
             Dictionary<string,int> bestellungDict;
             try
             {
@@ -43,13 +46,13 @@ namespace emensa.Extension{
                 bestellungDict[mz.Id.ToString()] += 1;
             }
             _viewData["bestellungCounter"] = bestellungDict.Sum(x => x.Value);
-            _response.Cookies.Append("bestellung",JsonConvert.SerializeObject(bestellungDict));
+            _response.Cookies.Append("bestellung" + _session.GetString("user"),JsonConvert.SerializeObject(bestellungDict));
             return bestellungDict;
         }
 
         internal Dictionary<string,int> getMahlzeiten()
         {
-            string bestellung = _request.Cookies["bestellung"];
+            string bestellung = _request.Cookies["bestellung" + _session.GetString("user")];
             Dictionary<string,int> bestellungDict;
             try
             {
@@ -63,20 +66,17 @@ namespace emensa.Extension{
             return bestellungDict;
         }
 
-        internal void modCookie(Tuple<int, int>[] arrayMod)
+        internal Dictionary<string,int> modCookie(Dictionary<string,int> bestellungDict)
         {
-            Dictionary<string,int> bestellungDict = new Dictionary<string, int>();
-            foreach (var item in arrayMod)
-            {
-                if(item.Item1 != 0)
-                bestellungDict.Add(Convert.ToString(item.Item1),item.Item2);
-            }
-            _response.Cookies.Append("bestellung",JsonConvert.SerializeObject(bestellungDict));
+            
+            _viewData["bestellungCounter"] = bestellungDict.Sum(x => x.Value);
+            _response.Cookies.Append("bestellung" + _session.GetString("user") ,JsonConvert.SerializeObject(bestellungDict));
+            return bestellungDict;
         }
 
         internal void clearAll()
         {
-            _response.Cookies.Delete("bestellung");
+            _response.Cookies.Delete("bestellung" + _session.GetString("user"));
         }
     }
 

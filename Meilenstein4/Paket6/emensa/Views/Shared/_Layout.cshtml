@@ -35,7 +35,7 @@
                             <li class="nav-item"><a class="nav-link active" href="#">Kontakt</a></li>
                             <li class="nav-item"><a class="nav-link active" asp-action="Warenkorb" asp-controller="Bestellungen">Bestellungen 
                                 <span class="cart-count">
-                                    @emensa.Extension.HttpRequestExtensions.BestellungCounter(Context.Request, ViewData)  
+                                    @emensa.Extension.HttpRequestExtensions.BestellungCounter(Context.Request, ViewData, HttpContextAccessor.HttpContext.Session)  
                                 </span></a></li>
                             <li class="nav-item"><a class="nav-link active" target="_blank" href="https://fh-aachen.de">FH Aachen</a></li>
                         </ul>

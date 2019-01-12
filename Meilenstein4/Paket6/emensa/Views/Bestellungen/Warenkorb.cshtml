@@ -1,5 +1,6 @@
 @using emensa.Models
 @using emensa.ViewModels
+@inject IHttpContextAccessor HttpContextAccessor
 @model IEnumerable<MahlzeitenPreise>
 
 @{
@@ -7,105 +8,121 @@
     float gesamtPreis = 0;
 }
 
-
-<h3>Warenkorb</h3>
 <hr />
+<div>
+    @TempData["SuccessSubmit"]
+</div>
 <div class="row">
     <div class="col-md-12">
-        <form asp-action="Warenkorb">
-            <h5>Vorbestellungen als Mitarbeiter</h5>
-<form method="post">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    ID
-                </th>
-                <th>
-                    Mahlzeit
-                </th>
-                <th>
-                    Einzelpreis
-                </th>
-                <th>
-                    Anzahl
-                </th>
-                <th>
-                    Gesamtpreis
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-        @{
-            
-            if(Model.ToList().Count != 0){
-                foreach (var item in Model) {
-                gesamtPreis += (item.Preise.Gastpreis * item.Anzahl);
+       <h3>Vorbestellungen als 
+            @if(string.IsNullOrEmpty(HttpContextAccessor.HttpContext.Session.GetString("user"))){
+                <span>Gast</span>
+            }
+            else{
+                @(HttpContextAccessor.HttpContext.Session.GetString("role"))
+            }
+        </h3>
+        <form method="post">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Mahlzeiten.Id)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Mahlzeiten.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Preise.Gastpreis) €
-                        </td>
-                        <td>
-                            <input type="number" name="anzahl_@item.Mahlzeiten.Id" min="0" max="100" value="@item.Anzahl">
-                        </td>
-                        <td>
-                            @(item.Anzahl * item.Preise.Gastpreis) €
-                        </td>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Mahlzeit
+                        </th>
+                        <th>
+                            Einzelpreis
+                        </th>
+                        <th>
+                            Anzahl
+                        </th>
+                        <th>
+                            Gesamtpreis
+                        </th>
                     </tr>
+                </thead>
+                <tbody>
+                @{
+                    
+                    if(Model.ToList().Count != 0){
+                        foreach (var item in Model) {
+                        float preis = item.Preise.Gastpreis;
+                        if(HttpContextAccessor.HttpContext.Session.GetString("role") == "Student"){
+                            preis = item.Preise.Studentpreis;
+                        } else if(HttpContextAccessor.HttpContext.Session.GetString("role") == "Mitarbeiter"){
+                            preis = item.Preise.MaPreis;
+                        }
+                        gesamtPreis += (preis * item.Anzahl);
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Mahlzeiten.Id)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Mahlzeiten.Name)
+                                </td>
+                                <td>
+                                    @(preis) €
+                                </td>
+                                <td>
+                                    <input type="hidden" name="arrayID" value="@item.Mahlzeiten.Id">
+                                    <input type="number" name="arrayAnzahl" min="0" max="@item.Mahlzeiten.Vorrat" value="@item.Anzahl">
+                                </td>
+                                <td>
+                                    @(item.Anzahl * preis) €
+                                </td>
+                            </tr>
+                        }
+                    } else{
+                        <tr>
+                            <td class="alert-info margin-top-row padding-alert">
+                                Ihr Warenkorb ist leer!
+                            </td>
+                            <td class="alert-info margin-top-row padding-alert"></td>
+                            <td class="alert-info margin-top-row padding-alert"></td>
+                            <td class="alert-info margin-top-row padding-alert"></td>
+                            <td class="alert-info margin-top-row padding-alert"></td>
+
+                        </tr>
+                    }
                 }
-            } else{
                 <tr>
-                    <td class="alert-info margin-top-row padding-alert">
-                        Ihr Warenkorb ist leer!
+                    <td>
+                    <a asp-action="DeleteWarenkorb">Alle löschen</a>
                     </td>
-                    <td class="alert-info margin-top-row padding-alert"></td>
-                    <td class="alert-info margin-top-row padding-alert"></td>
-                    <td class="alert-info margin-top-row padding-alert"></td>
-                    <td class="alert-info margin-top-row padding-alert"></td>
-
+                    <td><input type="submit" value="Änderungen übernehmen" class="button-link mintgreen" /></td>
+                    <td>Diese Bestellung kostet: </td>
+                    <td></td>
+                    <td>
+                        <div class="border-mintgreen" style="width:7em; text-align:center">
+                        @(gesamtPreis) €
+                        </div>
+                    </td>
                 </tr>
-            }
-        }
-        <tr>
-            <td>
-            <a asp-action="DeleteWarenkorb">Alle löschen</a>
-            </td>
-            <td><input type="submit" value="Änderungen übernehmen" class="button-link mintgreen" /></td>
-            <td>Diese Bestellung kostet: </td>
-            <td></td>
-            <td>
-                <div class="border-mintgreen" style="width:7em; text-align:center">
-                @(gesamtPreis) €
-                </div>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-</form>
+                </tbody>
+            </table>
+        </form>
 
-
-<div>
-    Wann kommen Sie das Essen abholen: 
-    <select>
-        @{
-            for(int x = 0; x < 12; x++){
-                int delta = 30;
-                int rest = 0;
-                if((DateTime.Now.Minute % 15) != 0){
-                rest = 15 - (DateTime.Now.Minute % 15);
-                }
-                <option>@(DateTime.Now.AddMinutes((15*x) + delta + rest).ToShortTimeString())</option>
-            }
-        }
-        
-    </select>
-</div>
+        <form asp-action="SubmitWarenkorb" method="post">
+            <div>
+                Wann kommen Sie das Essen abholen: 
+                <select name="abholzeit">
+                    @{
+                        for(int x = 0; x < 12; x++){
+                            int delta = 30;
+                            int rest = 0;
+                            if((DateTime.Now.Minute % 15) != 0){
+                            rest = 15 - (DateTime.Now.Minute % 15);
+                            }
+                            <option value="@(DateTime.Now.AddMinutes((15*x) + delta + rest).ToShortTimeString())">
+                                @(DateTime.Now.AddMinutes((15*x) + delta + rest).ToShortTimeString())
+                            </option>
+                        }
+                    }
+                    
+                </select>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Jetzt kostenpflichtig vorbestellen." class="btn btn-default" />
             </div>
