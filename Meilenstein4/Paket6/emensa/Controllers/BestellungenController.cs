@@ -71,15 +71,19 @@ namespace emensa.Controllers
         }
 
 
-        // POST: Bestellungen/Create
+        // POST: Bestellungen/SubmitWarenkorb
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitWarenkorb(DateTime abholzeit)
         {
+            if(string.IsNullOrEmpty(HttpContext.Session.GetString("user"))){
+                return Redirect("/Benutzer/Login");
+            }
+
             _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
-           
+
             using (var transaction = _context.Database.BeginTransaction())
             {
                 var endpreisQuery = _context.Mahlzeiten
@@ -100,6 +104,7 @@ namespace emensa.Controllers
                 try
                 {
                     Bestellungen bestellungen = new Bestellungen();
+                    bestellungen.BenutzerNummer = _context.Benutzer.Where(x=> x.Nutzername == HttpContext.Session.GetString("user")).First().Nummer;
                     bestellungen.Abholzeitpunkt = abholzeit;
                     bestellungen.BestellZeitpunkt = DateTime.Now;
                     bestellungen.Endpreis = endpreis;

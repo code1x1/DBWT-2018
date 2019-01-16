@@ -40,7 +40,7 @@ namespace emensa.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseMySQL("Server=localhost;Port=3306;Database=emensa;Uid=denis;Pwd=;");
             }
         }
@@ -155,15 +155,25 @@ namespace emensa.Models
 
                 entity.ToTable("Bestellungen", "emensa");
 
+                entity.HasIndex(e => e.BenutzerNummer)
+                    .HasName("c_fkBenutzerNummer");
+
                 entity.Property(e => e.Nummer).HasColumnType("int(11)");
 
                 entity.Property(e => e.Abholzeitpunkt).HasDefaultValueSql("'0000-00-00 00:00:00'");
+
+                entity.Property(e => e.BenutzerNummer).HasColumnType("int(11)");
 
                 entity.Property(e => e.BestellZeitpunkt).HasDefaultValueSql("current_timestamp()");
 
                 entity.Property(e => e.Endpreis)
                     .HasColumnType("float(10,2)")
                     .HasDefaultValueSql("NULL");
+
+                entity.HasOne(d => d.BenutzerNummerNavigation)
+                    .WithMany(p => p.Bestellungen)
+                    .HasForeignKey(d => d.BenutzerNummer)
+                    .HasConstraintName("c_fkBenutzerNummer");
             });
 
             modelBuilder.Entity<Bilder>(entity =>

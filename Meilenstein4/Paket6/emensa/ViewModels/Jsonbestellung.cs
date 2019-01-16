@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 namespace emensa.ViewModels {
     public class JsonBestellung
     {
-        public List<Benutzer> benutzers;
+        public Benutzer benutzers;
         public DateTime Abholzeit;
         public Int32 Bestellnummer;
         public List<Mahlzeiten> mahlzeitens;

@@ -69,6 +69,7 @@ namespace emensa.Models
         public DateTime? Geburtsdatum { get; set; }
         public int? Alter { get; set; }
 
+        public virtual ICollection<Bestellungen> Bestellungen { get; set; }
         public virtual ICollection<FhAngehörige> FhAngehörige { get; set; }
         public virtual ICollection<Freunde> FreundeFreundNavigation { get; set; }
         public virtual ICollection<Freunde> FreundeNutzerNavigation { get; set; }
