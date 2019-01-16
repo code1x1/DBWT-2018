@@ -9,6 +9,8 @@ using emensa.Models;
 using emensa.ViewModels;
 using emensa.Extension;
 using Microsoft.AspNetCore.Http;
+using MySql.Data.MySqlClient;
+using System.Diagnostics;
 
 namespace emensa.Controllers
 {
@@ -76,13 +78,14 @@ namespace emensa.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitWarenkorb(DateTime abholzeit)
+        public IActionResult SubmitWarenkorb(DateTime abholzeit)
         {
-            if(string.IsNullOrEmpty(HttpContext.Session.GetString("user"))){
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("user")))
+            {
                 return Redirect("/Benutzer/Login");
             }
 
-            _cookie = new CookieWrapper(Request,Response,ViewData,HttpContext.Session);
+            _cookie = new CookieWrapper(Request, Response, ViewData, HttpContext.Session);
 
             using (var transaction = _context.Database.BeginTransaction())
             {
@@ -91,20 +94,23 @@ namespace emensa.Controllers
                 .Join(_context.Preise,
                     mahlzeit => mahlzeit.Id,
                     preis => preis.FkMahlzeiten,
-                    (mahlzeit, preis) => new { preis.Gastpreis, preis.MaPreis, preis.Studentpreis, mahlzeit.Id});
+                    (mahlzeit, preis) => new { preis.Gastpreis, preis.MaPreis, preis.Studentpreis, mahlzeit.Id });
 
-                float endpreis = endpreisQuery.Sum(x => x.Gastpreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
+                float endpreis = endpreisQuery.Sum(x => x.Gastpreis * _cookie.getMahlzeiten()[x.Id.ToString()]);
 
-                if(HttpContext.Session.GetString("role") == "Student") {
-                    endpreis = endpreisQuery.Sum(x => x.Studentpreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
-                } else if(HttpContext.Session.GetString("role") == "Mitarbeiter"){
-                    endpreis = endpreisQuery.Sum(x => x.MaPreis * _cookie.getMahlzeiten()[x.Id.ToString()] );
+                if (HttpContext.Session.GetString("role") == "Student")
+                {
+                    endpreis = endpreisQuery.Sum(x => x.Studentpreis * _cookie.getMahlzeiten()[x.Id.ToString()]);
+                }
+                else if (HttpContext.Session.GetString("role") == "Mitarbeiter")
+                {
+                    endpreis = endpreisQuery.Sum(x => x.MaPreis * _cookie.getMahlzeiten()[x.Id.ToString()]);
                 }
 
                 try
                 {
                     Bestellungen bestellungen = new Bestellungen();
-                    bestellungen.BenutzerNummer = _context.Benutzer.Where(x=> x.Nutzername == HttpContext.Session.GetString("user")).First().Nummer;
+                    bestellungen.BenutzerNummer = _context.Benutzer.Where(x => x.Nutzername == HttpContext.Session.GetString("user")).First().Nummer;
                     bestellungen.Abholzeitpunkt = abholzeit;
                     bestellungen.BestellZeitpunkt = DateTime.Now;
                     bestellungen.Endpreis = endpreis;
@@ -112,10 +118,10 @@ namespace emensa.Controllers
 
                     foreach (var item in _cookie.getMahlzeiten())
                     {
-                        BestellungEnthältMahlzeit bestellungMahlzeit = new BestellungEnthältMahlzeit(); 
+                        BestellungEnthältMahlzeit bestellungMahlzeit = new BestellungEnthältMahlzeit();
                         bestellungMahlzeit.Anzahl = item.Value;
                         bestellungMahlzeit.FkBestellungen = bestellungen.Nummer;
-                        bestellungMahlzeit.FkMahlzeit = Convert.ToInt32(item.Key);        
+                        bestellungMahlzeit.FkMahlzeit = Convert.ToInt32(item.Key);
                         _context.Add(bestellungMahlzeit);
 
                     }
@@ -125,15 +131,27 @@ namespace emensa.Controllers
                     TempData["SuccessSubmit"] = "Die Bestellung wurde kostenpflichtig verbucht!";
                     _cookie.clearAll();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine(ex);
                     transaction.Rollback();
                     // TODO: Handle failure
                     TempData["SuccessSubmit"] = "Die Bestellung konnte nicht ausgeführt werden!";
                 }
             }
 
-            await _context.SaveChangesAsync();
+            try{
+                _context.SaveChanges();
+            }
+            catch (MySqlException myex){
+                Debug.WriteLine(myex);
+                TempData["SuccessSubmit"] = "Die Bestellung übersteigt den Vorrat!";
+            }
+            catch(DbUpdateException dbex){
+                Debug.WriteLine(dbex);
+                TempData["SuccessSubmit"] = "Die Bestellung übersteigt den Vorrat!";
+            }
+
             return RedirectToAction(nameof(Warenkorb));
         }
 
