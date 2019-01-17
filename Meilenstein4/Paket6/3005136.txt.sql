@@ -128,7 +128,7 @@ CREATE TABLE `Mahlzeiten`(
     Beschreibung TEXT NOT NULL,
     Vorrat INT NOT NULL,
     fkKategorie INT,
-    CONSTRAINT c_Vorrat CHECK (Vorrat > -1),
+   -- CONSTRAINT c_Vorrat CHECK (Vorrat >= 0),
     CONSTRAINT c_fkMahlzeitenKategorie FOREIGN KEY(fkKategorie) 
 		REFERENCES `Kategorien`(ID),
     CONSTRAINT c_pkMahlzeiten PRIMARY KEY(ID)
@@ -391,6 +391,20 @@ UPDATE `Mahlzeiten` SET `Verfügbar`='1' WHERE `ID`='12';
 UPDATE `Mahlzeiten` SET `Verfügbar`='1' WHERE `ID`='1';
 UPDATE `Mahlzeiten` SET `Verfügbar`='1' WHERE `ID`='2';
 
+UPDATE `Mahlzeiten` SET `Vorrat`='100', `Verfügbar`='1' WHERE `ID`='1';
+UPDATE `Mahlzeiten` SET `Vorrat`='100', `Verfügbar`='1' WHERE `ID`='2';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='3';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='6';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='7';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='9';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='10';
+UPDATE `Mahlzeiten` SET `Vorrat`='100' WHERE `ID`='8';
+UPDATE `Mahlzeiten` SET `Vorrat`='100', `Verfügbar`='1' WHERE `ID`='5';
+UPDATE `Mahlzeiten` SET `Vorrat`='100', `Verfügbar`='1' WHERE `ID`='4';
+UPDATE `Mahlzeiten` SET `Verfügbar`='1' WHERE `ID`='6';
+UPDATE `Mahlzeiten` SET `Verfügbar`='1' WHERE `ID`='7';
+
+
 INSERT INTO `MahlzeitenBilder` (`IDBilder`, `IDMahlzeiten`) VALUES ('1', '1');
 INSERT INTO `MahlzeitenBilder` (`IDBilder`, `IDMahlzeiten`) VALUES ('2', '2');
 INSERT INTO `MahlzeitenBilder` (`IDBilder`, `IDMahlzeiten`) VALUES ('3', '3');
@@ -542,24 +556,9 @@ AFTER INSERT ON BestellungEnthältMahlzeit
 FOR EACH ROW
 BEGIN
 	UPDATE Mahlzeiten 
-    SET Mahlzeiten.Vorrat = Mahlzeiten.Vorrat - NEW.Anzahl 
+    SET Mahlzeiten.Vorrat = Mahlzeiten.Vorrat - NEW.Anzahl,
+    Mahlzeiten.Verfügbar = Mahlzeiten.Vorrat
     WHERE Mahlzeiten.ID = NEW.fkMahlzeit;
-END; //
-
-DELIMITER ;
-
-DROP TRIGGER IF EXISTS updateAvail;
-DELIMITER //
-CREATE TRIGGER updateAvail
-AFTER UPDATE ON Mahlzeiten
-FOR EACH ROW
-BEGIN
-	IF NEW.Vorrat = 0
-    THEN
-    UPDATE Mahlzeiten 
-    SET Verfügbar = 0 
-    WHERE ID = NEW.ID;
-    END IF;
 END; //
 
 DELIMITER ;

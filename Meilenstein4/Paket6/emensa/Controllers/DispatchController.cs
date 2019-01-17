@@ -37,7 +37,7 @@ namespace emensa.Controllers
                     let Mahlzeiten = bem.Join(_c.Mahlzeiten, (bems => bems.FkMahlzeit), (mz => mz.Id),(bems, mz) 
                                                     => new { Mahlzeit = new { Anzahl=bems.Anzahl, Name=mz.Name, Vorrat= mz.Vorrat, Kategorie=mz.FkKategorieNavigation.Bezeichnung} }) 
                     let benutzer = new {b.frist.BenutzerNummerNavigation.Vorname,b.frist.BenutzerNummerNavigation.Nachname,b.frist.BenutzerNummerNavigation.Nutzername,b.frist.BenutzerNummerNavigation.EMail}
-                    select new{ Benutzer=benutzer, Abholung=b.frist.Abholzeitpunkt, Bestellnummer=b.frist.Nummer, Mahlzeiten };
+                    select new { Benutzer=benutzer, Abholung=b.frist.Abholzeitpunkt, Bestellnummer=b.frist.Nummer, Mahlzeiten };
 
                 return Json(bestellungenListe);
                 

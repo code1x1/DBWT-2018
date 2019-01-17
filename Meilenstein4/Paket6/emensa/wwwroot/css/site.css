@@ -38,6 +38,10 @@ input{
     margin-top: 1em;
 }
 
+.anzahl-input{
+    margin-top:0;
+}
+
 a, .mintgreen{
     color: #00b5ad;
 }

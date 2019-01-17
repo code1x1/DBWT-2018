@@ -66,8 +66,8 @@
                                     @(preis) €
                                 </td>
                                 <td>
+                                    <input type="number" class="anzahl-input" name="arrayAnzahl" min="0" max="@item.Mahlzeiten.Vorrat" value="@item.Anzahl">
                                     <input type="hidden" name="arrayID" value="@item.Mahlzeiten.Id">
-                                    <input type="number" name="arrayAnzahl" min="0" max="@item.Mahlzeiten.Vorrat" value="@item.Anzahl">
                                 </td>
                                 <td>
                                     @(item.Anzahl * preis) €

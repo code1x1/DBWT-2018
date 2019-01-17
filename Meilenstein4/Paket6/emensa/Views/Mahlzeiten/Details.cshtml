@@ -1,5 +1,6 @@
 @model emensa.Models.Mahlzeiten
 @using emensa.Controllers
+@using emensa.Extension
 
 @{
     ViewData["Title"] = "Details";
@@ -114,7 +115,7 @@
                 <input type="hidden" name="Id" value="@Model.Id" />
                 <input type="submit" class="btn btn-default glyphicon glyphicon-cutlery" value="Vorbestellen" @{
                     if(Model.Vorrat < 1){
-                        @: disabled
+                        <text>disabled</text>
                     }
                 } />
             </form>
