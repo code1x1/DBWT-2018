@@ -31,6 +31,7 @@ namespace emensa.Controllers
 
                 var bestellungenListe = 
                     from _bestellung in _c.Bestellungen
+                    where _bestellung.Abholzeitpunkt > DateTime.Now.AddMinutes(30)
                     group _bestellung by _bestellung.Nummer into bestellung
                     let b = new { frist = bestellung.First() }
                     let bem = _c.BestellungEnthältMahlzeit.Where(x=> x.FkBestellungen == b.frist.Nummer)

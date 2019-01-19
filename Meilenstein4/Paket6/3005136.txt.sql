@@ -128,7 +128,7 @@ CREATE TABLE `Mahlzeiten`(
     Beschreibung TEXT NOT NULL,
     Vorrat INT NOT NULL,
     fkKategorie INT,
-   -- CONSTRAINT c_Vorrat CHECK (Vorrat >= 0),
+    CONSTRAINT c_Vorrat CHECK (Vorrat >= 0),
     CONSTRAINT c_fkMahlzeitenKategorie FOREIGN KEY(fkKategorie) 
 		REFERENCES `Kategorien`(ID),
     CONSTRAINT c_pkMahlzeiten PRIMARY KEY(ID)
