@@ -122,7 +122,7 @@ namespace emensa.Controllers
                             (`Vorname`, `Nachname`, `E-Mail`, `Nutzername`, 
                                     `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) 
                             VALUES ('{benutzer.Vorname}', '{benutzer.Nachname}', '{benutzer.EMail}', '{benutzer.Nutzername}',
-                                    '{DateTime.Now.ToShortDateString()}', '{benutzer.Geburtsdatum}', '{benutzer.SaltString}', '{benutzer.HashString}', 0);";
+                                    '{DateTime.Now.ToShortDateString()}', '{benutzer.Geburtsdatum}', '{benutzer.Salt}', '{benutzer.Hash}', 0);";
                             int rows = cmd.ExecuteNonQuery(); // DML
                             
                             
