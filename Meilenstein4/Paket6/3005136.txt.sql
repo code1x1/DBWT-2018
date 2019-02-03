@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS `Mahlzeiten`;
 DROP TABLE IF EXISTS `Kategorien`;
 DROP TABLE IF EXISTS `Bestellungen`;
 DROP TABLE IF EXISTS `Mitarbeiter`;
--- DROP TABLE IF EXISTS `Bilder`; 
+DROP TABLE IF EXISTS `Bilder`; 
 DROP TABLE IF EXISTS `Student`;
 DROP TABLE IF EXISTS `Gäste`;
 DROP TABLE IF EXISTS `FH Angehörige`;
@@ -32,8 +32,8 @@ CREATE TABLE `Benutzer` (
     Nutzername VARCHAR(150) NOT NULL,
     LetzerLogin TIMESTAMP NULL DEFAULT NULL,
     `E-Mail` VARCHAR(150) NOT NULL,
-    Salt VARCHAR(32) NOT NULL,
-    `Hash` VARCHAR(24) NOT NULL,
+    SaltString VARCHAR(32) NOT NULL,
+    `HashString` VARCHAR(24) NOT NULL,
     AnlegeDatum DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     Aktiv BOOL NOT NULL,
     Vorname VARCHAR(100) NOT NULL,
@@ -103,13 +103,13 @@ CREATE TABLE `Bestellungen`(
     CONSTRAINT c_pkBestellungen PRIMARY KEY(Nummer)
 );
 
--- CREATE TABLE `Bilder`(
--- 	ID INT NOT NULL AUTO_INCREMENT,
---     `Alt-Text` TEXT NOT NULL,
---     Titel VARCHAR(150),
---     `Binärdaten` LONGBLOB NOT NULL,
---     CONSTRAINT c_pkBilder PRIMARY KEY(ID)
--- );
+CREATE TABLE `Bilder`(
+	ID INT NOT NULL AUTO_INCREMENT,
+    `Alt-Text` TEXT NOT NULL,
+    Titel VARCHAR(150),
+    `Binärdaten` LONGBLOB NOT NULL,
+    CONSTRAINT c_pkBilder PRIMARY KEY(ID)
+);
 
 CREATE TABLE `Kategorien`(
 	ID INT NOT NULL AUTO_INCREMENT,
@@ -241,7 +241,7 @@ ADD COLUMN `Verfügbar` BOOL AFTER `fkKategorie`,
 ADD UNIQUE INDEX `Name_UNIQUE` (`Name` ASC);
 
 ALTER TABLE `Benutzer` 
-ADD COLUMN `Alter` INT AS (YEAR(NOW()) - YEAR(Geburtsdatum)) 
+ADD COLUMN `Age` INT AS (YEAR(NOW()) - YEAR(Geburtsdatum)) 
 VIRTUAL AFTER Geburtsdatum;
 
 ALTER TABLE `Bestellungen`
@@ -283,14 +283,14 @@ ALTER TABLE `gehörtZuFachbereiche`
 ADD COLUMN `ID` INT NOT NULL AUTO_INCREMENT AFTER `fkFHAnge`,
 ADD PRIMARY KEY (`ID`);
 
--- ALTER TABLE `Bilder`
--- ADD COLUMN `Copyright` VARCHAR(300);
+ALTER TABLE `Bilder`
+ADD COLUMN `Copyright` VARCHAR(300);
 
 
 -- INSERT STATEMENTS
 
 INSERT INTO `Benutzer` 
-(`Nutzername`, `E-Mail`, `Salt`, `Hash`, `Aktiv`, `Vorname`, `Nachname`, `Geburtsdatum`) 
+(`Nutzername`, `E-Mail`, `SaltString`, `HashString`, `Aktiv`, `Vorname`, `Nachname`, `Geburtsdatum`) 
 VALUES 
 ('db9382s', 'db@test.de', '1', '2', '1', 'denis', 'behrends', '1990-12-17'),
 ('db9383s', 'db2@test.de', '1', '2', '1', 'denis2', 'behrends', '1990-12-17'),
@@ -337,16 +337,16 @@ INSERT INTO `Kategorien`(`Bezeichnung`, `fkOberKategorie`) VALUES
 ,('Gemüse', '1')
 ,('Smoothie', '2');
 
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('1', 'Steak in BBQ Sauce und Salat', 'Steak', '', 'https://unsplash.com/photos/auIbTAcSH6E');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('2', 'Erdbeer Smoothie mit fein geschnittenem Obst', 'Erdbeer Smoothie', '', 'https://unsplash.com/photos/nkHBFwVBzkg');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('3', 'Pommes mit Speck und Gemüse Käse überbacken', 'Pommes mit Speck', '', 'https://unsplash.com/photos/R18ecx07b3c');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('4', 'Leckere Teigtasche mit Fleisch und Gemüse', 'Rind Gemüse Tacco', '', 'https://unsplash.com/photos/vzX2rgUbQXM');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('5', 'BBQ Burger mit Gemüse', 'BBQ Burger', '', 'https://unsplash.com/photos/rbcvIrxw6KA');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('6', 'Pfannkuchen mit Erdbeeren', 'Pfannkuchen', '', 'https://unsplash.com/photos/GuvimT4IFok');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('7', 'Himbeersorbet', 'Himbeereis', '', 'https://unsplash.com/photos/MXovqM130UI');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('8', 'Nudelsuppe mit Gemüse', 'Nudelsuppe', '', 'https://unsplash.com/photos/WBX-ZLr8P7I');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('9', 'Rotebete Pizza mit Avocado', 'Rotebete Pizza', '', 'https://unsplash.com/photos/smN1dzUTj9Y');
--- INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('10', 'Salami Pizza mit Kartoffeln und Gemüse', 'Salami Pizza', '', 'https://unsplash.com/photos/MNtag_eXMKw');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('1', 'Steak in BBQ Sauce und Salat', 'Steak', '', 'https://unsplash.com/photos/auIbTAcSH6E');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('2', 'Erdbeer Smoothie mit fein geschnittenem Obst', 'Erdbeer Smoothie', '', 'https://unsplash.com/photos/nkHBFwVBzkg');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('3', 'Pommes mit Speck und Gemüse Käse überbacken', 'Pommes mit Speck', '', 'https://unsplash.com/photos/R18ecx07b3c');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('4', 'Leckere Teigtasche mit Fleisch und Gemüse', 'Rind Gemüse Tacco', '', 'https://unsplash.com/photos/vzX2rgUbQXM');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('5', 'BBQ Burger mit Gemüse', 'BBQ Burger', '', 'https://unsplash.com/photos/rbcvIrxw6KA');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('6', 'Pfannkuchen mit Erdbeeren', 'Pfannkuchen', '', 'https://unsplash.com/photos/GuvimT4IFok');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('7', 'Himbeersorbet', 'Himbeereis', '', 'https://unsplash.com/photos/MXovqM130UI');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('8', 'Nudelsuppe mit Gemüse', 'Nudelsuppe', '', 'https://unsplash.com/photos/WBX-ZLr8P7I');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('9', 'Rotebete Pizza mit Avocado', 'Rotebete Pizza', '', 'https://unsplash.com/photos/smN1dzUTj9Y');
+INSERT INTO `Bilder` (`ID`, `Alt-Text`, `Titel`, `Binärdaten`, `Copyright`) VALUES ('10', 'Salami Pizza mit Kartoffeln und Gemüse', 'Salami Pizza', '', 'https://unsplash.com/photos/MNtag_eXMKw');
 
 REPLACE INTO `Kategorien` (`ID`, `Bezeichnung`, `fkOberKategorie`, `fkBild`) VALUES
 	(1, 'Hauptspeisen', NULL, NULL),
@@ -531,11 +531,11 @@ INSERT INTO `MahlzeitenZutaten` (`IDZutaten`, `IDMahlzeiten`) VALUES ('2101', '1
 INSERT INTO `MahlzeitenZutaten` (`IDZutaten`, `IDMahlzeiten`) VALUES ('270', '2');
 INSERT INTO `MahlzeitenZutaten` (`IDZutaten`, `IDMahlzeiten`) VALUES ('9105', '3');
 
-REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) VALUES (21, 'Bugs', 'Findmore', 'dbwt2018@ismypassword.com', 'bugfin', '2018-11-14 17:44:10', '2018-11-14', '1996-12-13', 'MPVdLDf0zNVzpOHP+GmRxoBg9mdJIlc5', '4nx5U6DIE+N8xsbpwUr3Q1KG', 1);
-REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) VALUES (22, 'Donald', 'Truck', 'testing@ismypassword.com', 'dot', '2018-11-14 17:44:10', '2018-11-14', '1991-12-11', 'Ydn1iGl08JvvkVExSEiKDQhfYOaCtgOO', 'm5kZ68YVNU3xBiDqorthK9UP', 1);
-REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) VALUES (23, 'Fiona', 'Index', 'an0ther@ismypassword.com', 'fionad', '2018-11-14 17:44:10', '2018-11-14', '1993-12-10', 'I5GXy7BwYU2t3pHZ5YkBfKMbvN7Sr81O', 'oYylNvPe7YmjO1IHNdLA/XxJ', 1);
-REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) VALUES (24, 'Wendy', 'Burger', 's3cr3tz@ismypassword.com', 'bkahuna', '2018-11-14 17:44:10', '2018-11-14', '1982-12-12', 't1TAVguVwIiejXf3baaObIAtPx7Y+2iY', 'IMK2n5r8RUVFo4bMMS8uDyH4', 1);
-REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `Salt`, `Hash`, `Aktiv`) VALUES (25, 'Monster', 'Robot', '^;_`;^@ismypassword.com', 'root', '2018-11-14 17:44:10', '2018-11-14', '1982-12-12', 'dX8YsBM9atpYto9caWHJM6Eet7bUngxk', 'nRt3MSBdNUHPj/q02WPgXaDA', 1);
+REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `SaltString`, `HashString`, `Aktiv`) VALUES (21, 'Bugs', 'Findmore', 'dbwt2018@ismypassword.com', 'bugfin', '2018-11-14 17:44:10', '2018-11-14', '1996-12-13', 'MPVdLDf0zNVzpOHP+GmRxoBg9mdJIlc5', '4nx5U6DIE+N8xsbpwUr3Q1KG', 1);
+REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `SaltString`, `HashString`, `Aktiv`) VALUES (22, 'Donald', 'Truck', 'testing@ismypassword.com', 'dot', '2018-11-14 17:44:10', '2018-11-14', '1991-12-11', 'Ydn1iGl08JvvkVExSEiKDQhfYOaCtgOO', 'm5kZ68YVNU3xBiDqorthK9UP', 1);
+REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `SaltString`, `HashString`, `Aktiv`) VALUES (23, 'Fiona', 'Index', 'an0ther@ismypassword.com', 'fionad', '2018-11-14 17:44:10', '2018-11-14', '1993-12-10', 'I5GXy7BwYU2t3pHZ5YkBfKMbvN7Sr81O', 'oYylNvPe7YmjO1IHNdLA/XxJ', 1);
+REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `SaltString`, `HashString`, `Aktiv`) VALUES (24, 'Wendy', 'Burger', 's3cr3tz@ismypassword.com', 'bkahuna', '2018-11-14 17:44:10', '2018-11-14', '1982-12-12', 't1TAVguVwIiejXf3baaObIAtPx7Y+2iY', 'IMK2n5r8RUVFo4bMMS8uDyH4', 1);
+REPLACE INTO `Benutzer` (`Nummer`, `Vorname`, `Nachname`, `E-Mail`, `Nutzername`, `LetzerLogin`, `Anlegedatum`, `Geburtsdatum`, `SaltString`, `HashString`, `Aktiv`) VALUES (25, 'Monster', 'Robot', '^;_`;^@ismypassword.com', 'root', '2018-11-14 17:44:10', '2018-11-14', '1982-12-12', 'dX8YsBM9atpYto9caWHJM6Eet7bUngxk', 'nRt3MSBdNUHPj/q02WPgXaDA', 1);
 
 REPLACE INTO `Freunde` (`Nutzer`, `Freund`) VALUES (21, 22);
 REPLACE INTO `Freunde` (`Nutzer`, `Freund`) VALUES (21, 23);
@@ -545,7 +545,7 @@ REPLACE INTO `Freunde` (`Nutzer`, `Freund`) VALUES (22, 24);
 
 
 -- Test Benutzer Passwort: jacky-home1990
-UPDATE `Benutzer` SET `Salt`='MZGVdewtzEtWpbN3tHQnTyYQ7mK02GUZ', `Hash`='RLibwr6SXlb0XLC4qr6FEBdZ' WHERE `Nummer`='3';
+UPDATE `Benutzer` SET `SaltString`='MZGVdewtzEtWpbN3tHQnTyYQ7mK02GUZ', `HashString`='RLibwr6SXlb0XLC4qr6FEBdZ' WHERE `Nummer`='3';
 
 -- UPDATE `Benutzer` SET `Aktiv`='1' WHERE `Nummer`='#';
 

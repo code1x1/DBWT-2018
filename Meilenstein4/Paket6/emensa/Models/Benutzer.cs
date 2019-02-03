@@ -34,9 +34,9 @@ namespace emensa.Models
         [EmailAddress(ErrorMessage = "Invalid email address.")]
         public string EMail { get; set; }
         [ScaffoldColumn(false)]
-        public string Salt { get; set; }
+        public string SaltString { get; set; }
         [ScaffoldColumn(false)]
-        public string Hash { get; set; }        
+        public string HashString { get; set; }        
         [MinLength(4,ErrorMessage="Das Passwort muss mindestens 4 Zeichen lang sein.")]
         [DisplayName("Passwort")]
         [NotMapped]
@@ -67,7 +67,7 @@ namespace emensa.Models
         public string Nachname { get; set; }
         [DateAttribute(ErrorMessage="Das angegeben Datum kann nicht verwendet werden.")]
         public DateTime? Geburtsdatum { get; set; }
-        public int? Alter { get; set; }
+        public int? Age { get; set; }
 
         public virtual ICollection<Bestellungen> Bestellungen { get; set; }
         public virtual ICollection<FhAngehörige> FhAngehörige { get; set; }
@@ -104,8 +104,8 @@ namespace emensa.Models
                 string[] splittedhash = createhash.Split(':');
                 string salt = splittedhash[3];
                 string hash = splittedhash[4];
-                this.Salt = salt;
-                this.Hash = hash;
+                this.SaltString = salt;
+                this.HashString = hash;
             }
         }
 
@@ -116,8 +116,8 @@ namespace emensa.Models
                                                 "sha1",
                                                 "64000",
                                                 Convert.ToString(18),
-                                                this.Salt,
-                                                this.Hash));                
+                                                this.SaltString,
+                                                this.HashString));                
             }
         }
 

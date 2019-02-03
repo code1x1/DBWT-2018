@@ -67,7 +67,7 @@ namespace emensa.Models
 
                 entity.Property(e => e.Aktiv).HasColumnType("tinyint(1)");
 
-                entity.Property(e => e.Alter)
+                entity.Property(e => e.Age)
                     .HasColumnType("int(11)")
                     .HasDefaultValueSql("NULL");
 
@@ -83,7 +83,7 @@ namespace emensa.Models
                     .HasColumnType("date")
                     .HasDefaultValueSql("NULL");
 
-                entity.Property(e => e.Hash)
+                entity.Property(e => e.HashString)
                     .IsRequired()
                     .HasMaxLength(24)
                     .IsUnicode(false);
@@ -100,7 +100,7 @@ namespace emensa.Models
                     .HasMaxLength(150)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Salt)
+                entity.Property(e => e.SaltString)
                     .IsRequired()
                     .HasMaxLength(32)
                     .IsUnicode(false);
