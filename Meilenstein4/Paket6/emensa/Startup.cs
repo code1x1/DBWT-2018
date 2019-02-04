@@ -24,6 +24,7 @@ namespace emensa
 
         public IConfiguration Configuration { get; private set; }
 
+        public static String ConnectionString { get; set; }
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -35,7 +36,7 @@ namespace emensa
                 options.CheckConsentNeeded = context => false;  
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            ConnectionString = Configuration.GetConnectionString("emensa");
             services.AddDbContext<emensaContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("emensa")));
 /**/

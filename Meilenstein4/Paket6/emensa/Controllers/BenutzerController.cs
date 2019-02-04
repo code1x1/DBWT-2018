@@ -110,7 +110,7 @@ namespace emensa.Controllers
 
                 benutzer.createHashSalt();
                 // innerhalb der Connection con eine Transaktion beginnen
-                MySqlConnection con = new MySqlConnection(_context.Database.GetDbConnection().ConnectionString);
+                MySqlConnection con = new MySqlConnection(Startup.ConnectionString);
                 try{
                     con.Open();
                     MySqlTransaction tr = con.BeginTransaction();                

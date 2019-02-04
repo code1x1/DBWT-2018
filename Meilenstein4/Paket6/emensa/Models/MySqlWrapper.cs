@@ -7,7 +7,7 @@ using MySql.Data.MySqlClient;
 namespace emensa.Models{
     public class MySqlWrapper{
         
-        public static string conString = "Server=localhost;Port=3306;Database=emensa;Uid=denis;Pwd=;";
+        public static string conString = Startup.ConnectionString;
         public MySqlWrapper(IConfiguration configuration){
             Configuration = configuration;
         }
