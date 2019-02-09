@@ -81,10 +81,12 @@ ul.header{
     margin-top: 1em;
 }
 
-li a.nav-link {
-    border-right: 1px solid black;
-    padding:0 1rem;
-    height: 1.5rem;
+@media only screen and (min-width:576px){
+    li a.nav-link {
+        border-right: 1px solid black;
+        padding:0 1rem;
+        height: 1.5rem;
+    }
 }
 
 nav li.nav-item:last-child a{

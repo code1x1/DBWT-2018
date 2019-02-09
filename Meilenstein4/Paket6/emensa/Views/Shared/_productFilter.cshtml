@@ -1,52 +1,55 @@
 @using MySql.Data.MySqlClient
 @using Microsoft.AspNetCore.Html
 
-
-
 <div class="col-md-3">
-    @using (Html.BeginForm("Liste","Mahlzeiten",FormMethod.Get))
-    {
-        <fieldset class="border padding-alert">
-            <legend>Speisenliste filtern</legend>
-            <div>
-                <select name="KategorieList">
-                            <option value=""></option>
-                    @{
-                        List<Kategorien> k = ((List<Kategorien>)ViewData["KategorieListe"]);
-                        foreach (Kategorien item in k.Where(x=>x.FkOberKategorie==null))
-                        {
-                            <optgroup value="@item.Id"  label="@item.Bezeichnung">
-                                @foreach(Kategorien item2 in k.Where(x=>x.FkOberKategorie==((Kategorien)item).Id))
-                                {
-                                    if(((Kategorien)ViewData["KategorieSelected"]) != null && ((Kategorien)ViewData["KategorieSelected"]).Id == @item2.Id){
-                                        <option value="@item2.Id" selected>@item2.Bezeichnung</option>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#filterSupportedContent" aria-controls="filterSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        Filter Menu
+    </button>
+    <div class="collapse navbar-collapse" id="filterSupportedContent">
+        @using (Html.BeginForm("Liste","Mahlzeiten",FormMethod.Get))
+        {
+            <fieldset class="border padding-alert">
+                <legend>Speisenliste filtern</legend>
+                <div>
+                    <select name="KategorieList">
+                                <option value=""></option>
+                        @{
+                            List<Kategorien> k = ((List<Kategorien>)ViewData["KategorieListe"]);
+                            foreach (Kategorien item in k.Where(x=>x.FkOberKategorie==null))
+                            {
+                                <optgroup value="@item.Id"  label="@item.Bezeichnung">
+                                    @foreach(Kategorien item2 in k.Where(x=>x.FkOberKategorie==((Kategorien)item).Id))
+                                    {
+                                        if(((Kategorien)ViewData["KategorieSelected"]) != null && ((Kategorien)ViewData["KategorieSelected"]).Id == @item2.Id){
+                                            <option value="@item2.Id" selected>@item2.Bezeichnung</option>
+                                        }
+                                        else{
+                                            <option value="@item2.Id">@item2.Bezeichnung</option>
+                                        }
                                     }
-                                    else{
-                                        <option value="@item2.Id">@item2.Bezeichnung</option>
-                                    }
-                                }
-                            </optgroup>
+                                </optgroup>
+                            }
                         }
-                    }
-                </select>
-            </div>
-            <div>
-                @Html.CheckBox("verfugbar",false)
-                <label for="verfugbar">verfugbar</label>
-            </div>
-            <div>
-                @Html.CheckBox("vegetar",false)
-                <label for="vegetar">vegetarisch</label>
-            </div>
-            <div>
-                @Html.CheckBox("vegan",false)
-                <label for="vegan">vegan</label>
-            </div>
-            <div>
-                @Html.CheckBox("all",false)
-                <label for="all">Alle anzeigen</label>
-            </div>
-        </fieldset>
-        <input type="submit" class="btn btn-default" value="Filtern" />
-    }
+                    </select>
+                </div>
+                <div>
+                    @Html.CheckBox("verfugbar",false)
+                    <label for="verfugbar">verfugbar</label>
+                </div>
+                <div>
+                    @Html.CheckBox("vegetar",false)
+                    <label for="vegetar">vegetarisch</label>
+                </div>
+                <div>
+                    @Html.CheckBox("vegan",false)
+                    <label for="vegan">vegan</label>
+                </div>
+                <div>
+                    @Html.CheckBox("all",false)
+                    <label for="all">Alle anzeigen</label>
+                </div>
+            </fieldset>
+            <input type="submit" class="btn btn-default" value="Filtern" />
+        }
+    </div>
 </div>
